@@ -152,7 +152,7 @@ if (!mock) {
 		background: var(--buttonBg);
 
 		&:hover {
-			background: rgba(0, 0, 0, 0.1);
+			background: var(--buttonHoverBg);
 		}
 	}
 
