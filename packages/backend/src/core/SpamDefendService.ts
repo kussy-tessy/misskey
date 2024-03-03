@@ -5,6 +5,8 @@ import { UserEntityService } from './entities/UserEntityService.js';
 import { bindThis } from '@/decorators.js';
 import { FederatedInstanceService } from '@/core/FederatedInstanceService.js';
 import { MiNote } from '@/models/Note.js';
+import Logger from '@/logger.js';
+import { LoggerService } from '@/core/LoggerService.js';
 
 export type InspectActivityArg =
   { type: 'create', mentionedUsersCount: number } |
@@ -12,13 +14,18 @@ export type InspectActivityArg =
 
 @Injectable()
 export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
+	private logger: Logger;
+  
   private threshold = 50;
   private recentTime = 1000 * 2 * 24 * 60 * 60;
 
   constructor(
     private userEntityService: UserEntityService,
-    private instanceService: FederatedInstanceService
-  ) { }
+    private instanceService: FederatedInstanceService,
+		private loggerService: LoggerService,
+  ) {
+    this.logger = this.loggerService.getLogger('spam-defend');
+   }
 
   @bindThis
   public async isSpamlike(user: { id: MiUser['id'], host: MiUser['host'] }, host: string | null, activity: InspectActivityArg) {
@@ -60,6 +67,8 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (hasTekitoName) score += 10
     if (hasNoDescription) score += 10
 
+    this.logger.info(`user: ${packedUser.name}, host: ${packedUser.host} score: ${score}`);
+
     return score
   }
 
@@ -74,8 +83,6 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
 
     let score = 0
     const instance = await this.instanceService.fetch(host);
-
-    console.log({instanceName: instance.name});
 
     // フォロワーがいるサーバーなら調べるまでもなくOK
     if (instance.followersCount > 0) return 0;
@@ -95,7 +102,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (isFisrtObservationAfterSpamFestival) score += 5;
     if (hasNoJapaneseDescription) score += 20;
 
-    console.log({score, instanceName: instance});
+    this.logger.info(`instance: ${instance.host}, score: ${score}`);
 
     return score;
   }
