@@ -59,6 +59,7 @@ export class NoteEntityService implements OnModuleInit {
 		@Inject(DI.channelsRepository)
 		private channelsRepository: ChannelsRepository,
 
+    private loggerService: LoggerService,
 		//private userEntityService: UserEntityService,
 		//private driveFileEntityService: DriveFileEntityService,
 		//private customEmojiService: CustomEmojiService,
