@@ -67,7 +67,8 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (hasTekitoName) score += 10
     if (hasNoDescription) score += 10
 
-    this.logger.info(`user: ${packedUser.name}, host: ${packedUser.host} score: ${score}`);
+    this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host} score: ${score}`);
+    this.logger.info(packedUser.followersCount + '←なんかこれ動いてない気がする'); 
 
     return score
   }
