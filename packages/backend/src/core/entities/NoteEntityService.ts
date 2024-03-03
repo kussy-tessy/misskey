@@ -65,7 +65,6 @@ export class NoteEntityService implements OnModuleInit {
 		//private customEmojiService: CustomEmojiService,
 		//private reactionService: ReactionService,
 	) {
-    this.logger = this.loggerService.getLogger('hide-note');
 	}
 
 	onModuleInit() {
@@ -98,8 +97,6 @@ export class NoteEntityService implements OnModuleInit {
 				}
 			}
 		}
-
-    this.logger.info(`text: ${packedNote.text}, localOnly: ${packedNote.localOnly}, meId: ${meId}, vis: ${packedNote.visibility}`);
 
 		// 連合なし、かつ visibility が home で未ログインなら非表示
 		if(packedNote.localOnly && packedNote.visibility === 'home' && !meId){
