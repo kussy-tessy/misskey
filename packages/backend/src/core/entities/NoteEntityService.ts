@@ -22,6 +22,8 @@ import type { CustomEmojiService } from '../CustomEmojiService.js';
 import type { ReactionService } from '../ReactionService.js';
 import type { UserEntityService } from './UserEntityService.js';
 import type { DriveFileEntityService } from './DriveFileEntityService.js';
+import Logger from '@/logger.js';
+import { LoggerService } from '@/core/LoggerService.js';
 
 @Injectable()
 export class NoteEntityService implements OnModuleInit {
@@ -31,6 +33,7 @@ export class NoteEntityService implements OnModuleInit {
 	private reactionService: ReactionService;
 	private idService: IdService;
 	private noteLoader = new DebounceLoader(this.findNoteOrFail);
+  private logger: Logger;
 
 	constructor(
 		private moduleRef: ModuleRef,
@@ -61,6 +64,7 @@ export class NoteEntityService implements OnModuleInit {
 		//private customEmojiService: CustomEmojiService,
 		//private reactionService: ReactionService,
 	) {
+    this.logger = this.loggerService.getLogger('hide-note');
 	}
 
 	onModuleInit() {
@@ -93,6 +97,8 @@ export class NoteEntityService implements OnModuleInit {
 				}
 			}
 		}
+
+    this.logger.info(`text: ${packedNote.text}, localOnly: ${packedNote.localOnly}, meId: ${meId}, vis: ${packedNote.visibility}`);
 
 		// 連合なし、かつ visibility が home で未ログインなら非表示
 		if(packedNote.localOnly && packedNote.visibility === 'home' && !meId){
@@ -229,6 +235,7 @@ export class NoteEntityService implements OnModuleInit {
 				return note.visibleUserIds.some((id: any) => meId === id);
 			}
 		}
+
 
 		// 連合なし、かつ visibility が home で未ログインなら非表示
 		if(note.localOnly && note.visibility === 'home' && !meId){
