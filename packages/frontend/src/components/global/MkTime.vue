@@ -45,6 +45,8 @@ function getDateSafe(n: Date | string | number) {
 const _time = props.time == null ? NaN : getDateSafe(props.time).getTime();
 const invalid = Number.isNaN(_time);
 const absolute = !invalid ? dateTimeFormat.format(_time) : i18n.ts._ago.invalid;
+const dateTime = new Date(_time);
+const absoluteTimeOnly = !invalid ? `${dateTime.getHours()}:${dateTime.getMinutes()}` : i18n.ts._ago.invalid;
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 const now = ref((props.origin ?? new Date()).getTime());
@@ -54,14 +56,17 @@ const relative = computed<string>(() => {
 	if (props.mode === 'absolute') return ''; // absoluteではrelativeを使わないので計算しない
 	if (invalid) return i18n.ts._ago.invalid;
 
+	const mixTimeFormat = (relative) => `${absoluteTimeOnly}(${relative})`;
+	const mixDateTimeFormat = (relative) => `${absolute}(${relative})`;
+
 	return (
-		ago.value >= 31536000 ? i18n.tsx._ago.yearsAgo({ n: Math.round(ago.value / 31536000).toString() }) :
-		ago.value >= 2592000 ? i18n.tsx._ago.monthsAgo({ n: Math.round(ago.value / 2592000).toString() }) :
-		ago.value >= 604800 ? i18n.tsx._ago.weeksAgo({ n: Math.round(ago.value / 604800).toString() }) :
-		ago.value >= 86400 ? i18n.tsx._ago.daysAgo({ n: Math.round(ago.value / 86400).toString() }) :
-		ago.value >= 3600 ? i18n.tsx._ago.hoursAgo({ n: Math.round(ago.value / 3600).toString() }) :
-		ago.value >= 60 ? i18n.tsx._ago.minutesAgo({ n: (~~(ago.value / 60)).toString() }) :
-		ago.value >= 10 ? i18n.tsx._ago.secondsAgo({ n: (~~(ago.value % 60)).toString() }) :
+		ago.value >= 31536000 ? mixDateTimeFormat(i18n.tsx._ago.yearsAgo({ n: Math.round(ago.value / 31536000).toString() })) :
+		ago.value >= 2592000 ? mixDateTimeFormat(i18n.tsx._ago.monthsAgo({ n: Math.round(ago.value / 2592000).toString() })) :
+		ago.value >= 604800 ? mixDateTimeFormat(i18n.tsx._ago.weeksAgo({ n: Math.round(ago.value / 604800).toString() })) :
+		ago.value >= 86400 ? mixDateTimeFormat(i18n.tsx._ago.daysAgo({ n: Math.round(ago.value / 86400).toString() })) :
+		ago.value >= 3600 ? mixTimeFormat(i18n.tsx._ago.hoursAgo({ n: Math.round(ago.value / 3600).toString() })) :
+		ago.value >= 60 ? mixTimeFormat(i18n.tsx._ago.minutesAgo({ n: (~~(ago.value / 60)).toString() })) :
+		ago.value >= 10 ? mixTimeFormat(i18n.tsx._ago.secondsAgo({ n: (~~(ago.value % 60)).toString() })) :
 		ago.value >= -3 ? i18n.ts._ago.justNow :
 		ago.value < -31536000 ? i18n.tsx._timeIn.years({ n: Math.round(-ago.value / 31536000).toString() }) :
 		ago.value < -2592000 ? i18n.tsx._timeIn.months({ n: Math.round(-ago.value / 2592000).toString() }) :
@@ -71,6 +76,24 @@ const relative = computed<string>(() => {
 		ago.value < -60 ? i18n.tsx._timeIn.minutes({ n: (~~(-ago.value / 60)).toString() }) :
 		i18n.tsx._timeIn.seconds({ n: (~~(-ago.value % 60)).toString() })
 	);
+
+	// return (
+	// 	ago.value >= 31536000 ? i18n.tsx._ago.yearsAgo({ n: Math.round(ago.value / 31536000).toString() }) :
+	// 	ago.value >= 2592000 ? i18n.tsx._ago.monthsAgo({ n: Math.round(ago.value / 2592000).toString() }) :
+	// 	ago.value >= 604800 ? i18n.tsx._ago.weeksAgo({ n: Math.round(ago.value / 604800).toString() }) :
+	// 	ago.value >= 86400 ? i18n.tsx._ago.daysAgo({ n: Math.round(ago.value / 86400).toString() }) :
+	// 	ago.value >= 3600 ? i18n.tsx._ago.hoursAgo({ n: Math.round(ago.value / 3600).toString() }) :
+	// 	ago.value >= 60 ? i18n.tsx._ago.minutesAgo({ n: (~~(ago.value / 60)).toString() }) :
+	// 	ago.value >= 10 ? i18n.tsx._ago.secondsAgo({ n: (~~(ago.value % 60)).toString() }) :
+	// 	ago.value >= -3 ? i18n.ts._ago.justNow :
+	// 	ago.value < -31536000 ? i18n.tsx._timeIn.years({ n: Math.round(-ago.value / 31536000).toString() }) :
+	// 	ago.value < -2592000 ? i18n.tsx._timeIn.months({ n: Math.round(-ago.value / 2592000).toString() }) :
+	// 	ago.value < -604800 ? i18n.tsx._timeIn.weeks({ n: Math.round(-ago.value / 604800).toString() }) :
+	// 	ago.value < -86400 ? i18n.tsx._timeIn.days({ n: Math.round(-ago.value / 86400).toString() }) :
+	// 	ago.value < -3600 ? i18n.tsx._timeIn.hours({ n: Math.round(-ago.value / 3600).toString() }) :
+	// 	ago.value < -60 ? i18n.tsx._timeIn.minutes({ n: (~~(-ago.value / 60)).toString() }) :
+	// 	i18n.tsx._timeIn.seconds({ n: (~~(-ago.value % 60)).toString() })
+	// );
 });
 
 let tickId: number;

@@ -47,8 +47,6 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     let score = 0
     const packedUser = await this.userEntityService.pack(user.id, null, { schema: 'UserDetailed' })
 
-    this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, ferCount: ${packedUser.followersCount}`);    
-
     // フォロワーのいるリモートユーザーOK
     if (packedUser.followersCount > 0) return 0;
 
