@@ -194,7 +194,10 @@ export class QueryService {
 			q.andWhere(new Brackets(qb => {
 				qb
 					.where('note.visibility = \'public\'')
-					.orWhere('note.visibility = \'home\'');
+					.orWhere(new Brackets(qb => {
+						qb.where('note.visibility = \'home\'')
+						.andWhere('note.localOnly = FALSE')
+					}));
 			}));
 		} else {
 			const followingQuery = this.followingsRepository.createQueryBuilder('following')
