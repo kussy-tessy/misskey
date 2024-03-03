@@ -14,18 +14,18 @@ export type InspectActivityArg =
 
 @Injectable()
 export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
-	private logger: Logger;
-  
+  private logger: Logger;
+
   private threshold = 50;
   private recentTime = 1000 * 2 * 24 * 60 * 60;
 
   constructor(
     private userEntityService: UserEntityService,
     private instanceService: FederatedInstanceService,
-		private loggerService: LoggerService,
+    private loggerService: LoggerService,
   ) {
     this.logger = this.loggerService.getLogger('spam-defend');
-   }
+  }
 
   @bindThis
   public async isSpamlike(user: { id: MiUser['id'], host: MiUser['host'] }, host: string | null, activity: InspectActivityArg) {
@@ -45,7 +45,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (!user.host) return 0;
 
     let score = 0
-    const packedUser = await this.userEntityService.pack<'UserDetailedNotMe'>(user.id)
+    const packedUser = await this.userEntityService.pack(user.id, null, { schema: 'UserDetailed' })
 
     // フォロワーのいるリモートユーザーOK
     if (packedUser.followersCount > 0) return 0;
@@ -68,7 +68,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (hasNoDescription) score += 10
 
     this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host} score: ${score}`);
-    this.logger.info(packedUser.followersCount + '←なんかこれ動いてない気がする'); 
+    this.logger.info(packedUser.followersCount + '←なんかこれ動いてない気がする');
 
     return score
   }
