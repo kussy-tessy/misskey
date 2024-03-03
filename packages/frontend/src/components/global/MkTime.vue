@@ -46,7 +46,9 @@ const _time = props.time == null ? NaN : getDateSafe(props.time).getTime();
 const invalid = Number.isNaN(_time);
 const absolute = !invalid ? dateTimeFormat.format(_time) : i18n.ts._ago.invalid;
 const dateTime = new Date(_time);
-const absoluteTimeOnly = !invalid ? `${dateTime.getHours()}:${dateTime.getMinutes()}` : i18n.ts._ago.invalid;
+const padZero = val => ('0' + val).slice(-2);
+const absoluteTimeOnly = !invalid ? 
+	`${padZero(dateTime.getHours())}:${padZero(dateTime.getMinutes())}` : i18n.ts._ago.invalid;
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 const now = ref((props.origin ?? new Date()).getTime());
