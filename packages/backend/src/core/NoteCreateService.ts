@@ -59,6 +59,7 @@ import { UtilityService } from '@/core/UtilityService.js';
 import { UserBlockingService } from '@/core/UserBlockingService.js';
 import { isReply } from '@/misc/is-reply.js';
 import { trackPromise } from '@/misc/promise-tracker.js';
+import { SpamDefendService } from './SpamDefendService.js';
 
 type NotificationType = 'reply' | 'renote' | 'quote' | 'mention';
 
@@ -151,7 +152,7 @@ type Option = {
 export class NoteCreateService implements OnApplicationShutdown {
 	#shutdownController = new AbortController();
 
-	public static ContainsProhibitedWordsError = class extends Error {};
+	public static ContainsProhibitedWordsError = class extends Error { };
 
 	constructor(
 		@Inject(DI.config)
@@ -219,6 +220,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		private instanceChart: InstanceChart,
 		private utilityService: UtilityService,
 		private userBlockingService: UserBlockingService,
+		private spamDefendService: SpamDefendService
 	) { }
 
 	@bindThis
@@ -359,7 +361,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 			mentionedUsers = data.apMentions ?? await this.extractMentionedUsers(user, combinedTokens);
 		}
 
-		if (this.isSpamLike(user)) throw new Error('spam?')
+		// SPAMチェック
+		if (await this.spamDefendService.isSpamlike(user, user.host, { type: 'create', mentionedUsersCount: mentionedUsers.length })) {
+			throw new Error(`SPAMフィルターに反応。${user.id, user.username, user.host}`)
+		}
 
 		tags = tags.filter(tag => Array.from(tag).length <= 128).splice(0, 32);
 
@@ -389,23 +394,6 @@ export class NoteCreateService implements OnApplicationShutdown {
 		);
 
 		return note;
-	}
-
-	@bindThis
-	private isSpamLike(user: {
-  		id: MiUser['id'];
-  		host: MiUser['host'];
-  		notesCount: MiUser['notesCount']
-  		avatarUrl: MiUser['avatarUrl']
-  		createdAt: MiUser['createdAt']
-	}, mentionedUsers: MinimumUser[] | null | undefined) {
-  		const isRemote = !!user.host;
-  		const isRecentlyObserved = Date.now() - new Date(user.createdAt).getTime() < 1000 * 12 * 60 * 60;
-  		const hasTooFewNotes = user.notesCount <= 3;
-  		const hasNoAvaterUrl = user.avatarUrl.includes('identicon');
-  		const hasMentions = mentionedUsers && mentionedUsers.length > 0
-
-  		return isRemote && isRecentlyObserved && hasTooFewNotes && hasNoAvaterUrl && hasMentions;
 	}
 
 	@bindThis
