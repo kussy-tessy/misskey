@@ -75,6 +75,8 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     let score = 0
     const instance = await this.instanceService.fetch(host);
 
+    console.log({instanceName: instance.name});
+
     // フォロワーがいるサーバーなら調べるまでもなくOK
     if (instance.followersCount > 0) return 0;
 
@@ -92,6 +94,9 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (isFirstObservationRecent) score += 5;
     if (isFisrtObservationAfterSpamFestival) score += 5;
     if (hasNoJapaneseDescription) score += 20;
+
+    console.log({score, instanceName: instance});
+
     return score;
   }
 
