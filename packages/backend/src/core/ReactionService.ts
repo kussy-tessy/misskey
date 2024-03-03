@@ -29,6 +29,7 @@ import { CustomEmojiService } from '@/core/CustomEmojiService.js';
 import { RoleService } from '@/core/RoleService.js';
 import { FeaturedService } from '@/core/FeaturedService.js';
 import { trackPromise } from '@/misc/promise-tracker.js';
+import { SpamDefendService } from './SpamDefendService.js';
 
 const FALLBACK = '\u2764';
 const PER_NOTE_REACTION_USER_PAIR_CACHE_MAX = 16;
@@ -99,6 +100,7 @@ export class ReactionService {
 		private apDeliverManagerService: ApDeliverManagerService,
 		private notificationService: NotificationService,
 		private perUserReactionsChart: PerUserReactionsChart,
+		private spamDefendService: SpamDefendService
 	) {
 	}
 
@@ -160,6 +162,10 @@ export class ReactionService {
 			userId: user.id,
 			reaction,
 		};
+
+		if (await this.spamDefendService.isSpamlike(user, { type: 'like', targetNote: note })) {
+			throw new Error('SPAMフィルターに反応');
+		}
 
 		// Create reaction
 		try {

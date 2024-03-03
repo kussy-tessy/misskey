@@ -28,11 +28,11 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
   }
 
   @bindThis
-  public async isSpamlike(user: { id: MiUser['id'], host: MiUser['host'] }, host: string | null, activity: InspectActivityArg) {
+  public async isSpamlike(user: { id: MiUser['id'], host: MiUser['host'] }, activity: InspectActivityArg) {
     const userScore = await this.calcSuspiciousUserScore(user);
     if (userScore === 0) return false;
 
-    const instanceScore = await this.calcSuspiciousInstanceScore(host);
+    const instanceScore = await this.calcSuspiciousInstanceScore(user.host);
     const activityScore = await this.calcSuspiciousActivity(activity);
 
     const score = userScore + instanceScore + activityScore;
@@ -67,8 +67,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (hasTekitoName) score += 10
     if (hasNoDescription) score += 10
 
-    this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host} score: ${score}`);
-    this.logger.info(packedUser.followersCount + '←なんかこれ動いてない気がする');
+    this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, score: ${score}`);
 
     return score
   }
