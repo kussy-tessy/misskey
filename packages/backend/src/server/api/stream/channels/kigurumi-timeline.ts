@@ -18,7 +18,6 @@ class KigurumiChannel extends Channel {
 	public static shouldShare = false;
 	public static requireCredential = true as const;
 	public static kind = 'read:account';
-	// private antennaId: string;
 
 	constructor(
 		private noteEntityService: NoteEntityService,
@@ -39,9 +38,6 @@ class KigurumiChannel extends Channel {
 
 	@bindThis
 	private async onEvent(data: GlobalEvents['kigurumi']['payload']) {
-		this.logger.info('onEvent');
-		this.logger.info(data.type);
-		this.logger.info(data.body.id);
 		if (data.type === 'note') {
 			const note = await this.noteEntityService.pack(data.body.id, this.user, { detail: true });
 

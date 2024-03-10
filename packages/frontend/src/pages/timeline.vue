@@ -15,7 +15,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<MkInfo
 						v-if="['home', 'local', 'social', 'kigurumi', 'global'].includes(src) && !defaultStore.reactiveState.timelineTutorials.value[src]"
 						style="margin-bottom: var(--margin);" closable @close="closeTutorial()">
-						{{ i18n.ts._timelineDescription[src] }}
+						{{ src === 'kigurumi' ? '着ぐるみさんタイムラインでは着ぐるみのハッシュタグと写真がついた投稿を見られます。' : i18n.ts._timelineDescription[src] }}
+						<!-- なんでかi18nが効かないんだよな -->
 					</MkInfo>
 					<MkPostForm v-if="defaultStore.reactiveState.showFixedPostForm.value" :class="$style.postForm"
 						:initialText="src === 'kigurumi' ? '#kigurumi #着ぐるみ' : undefined"

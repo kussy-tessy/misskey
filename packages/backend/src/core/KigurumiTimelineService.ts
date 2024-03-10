@@ -47,7 +47,6 @@ export class KigurumiTimelineService {
       r.exec();
 
       this.globalEventService.publishKigurumiStream('note', note);
-      this.logger.info('push and publish')
     }
   }
 
@@ -74,8 +73,6 @@ export class KigurumiTimelineService {
 
     const hasFile = note.fileIds.length > 0
     const hasKigurumiHashTag = note.tags.includes('kigurumi') || note.tags.includes('着ぐるみ');
-
-    this.logger.info(note.tags.toString());
 
     // 添付ファイルがついていてハッシュタグに#kigurumi, #着ぐるみを含むか
     return hasFile && hasKigurumiHashTag;
