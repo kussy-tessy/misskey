@@ -52,8 +52,8 @@ export const paramDef = {
 export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
 	constructor(
 		private activeUsersChart: ActiveUsersChart,
-		private idService: IdService,
 		private kigurumiTimelineService: KigurumiTimelineService,
+		private idService: IdService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const untilId = ps.untilId ?? (ps.untilDate ? this.idService.gen(ps.untilDate!) : null);
