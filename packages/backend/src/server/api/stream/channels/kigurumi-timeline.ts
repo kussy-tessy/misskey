@@ -75,6 +75,7 @@ export class KigurumiTimelineChannelService implements MiChannelService<true> {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+		private loggerService: LoggerService,
 	) {
 	}
 
@@ -82,6 +83,7 @@ export class KigurumiTimelineChannelService implements MiChannelService<true> {
 	public create(id: string, connection: Channel['connection']): KigurumiChannel {
 		return new KigurumiChannel(
 			this.noteEntityService,
+			this.loggerService,
 			id,
 			connection,
 		);
