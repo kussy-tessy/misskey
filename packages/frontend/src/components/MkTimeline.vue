@@ -168,9 +168,6 @@ function updatePaginationQuery() {
 	let endpoint: keyof Misskey.Endpoints | null;
 	let query: TimelineQueryType | null;
 
-	console.log({props})
-	console.log(props.src)
-
 	if (props.src === 'antenna') {
 		endpoint = 'antennas/notes';
 		query = {
@@ -198,7 +195,7 @@ function updatePaginationQuery() {
 		};
 	} else if (props.src === 'kigurumi') {
 		endpoint = 'notes/kigurumi-timeline';
-		query = null;
+		query = {};
 	} else if (props.src === 'global') {
 		endpoint = 'notes/global-timeline';
 		query = {
