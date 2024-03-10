@@ -9,8 +9,11 @@ import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { bindThis } from '@/decorators.js';
 import type { GlobalEvents } from '@/core/GlobalEventService.js';
 import Channel, { type MiChannelService } from '../channel.js';
+import Logger from '@/logger.js';
+import { LoggerService } from '@/core/LoggerService.js';
 
 class KigurumiChannel extends Channel {
+  private logger: Logger;
 	public readonly chName = 'kigurumi';
 	public static shouldShare = false;
 	public static requireCredential = true as const;
@@ -19,24 +22,26 @@ class KigurumiChannel extends Channel {
 
 	constructor(
 		private noteEntityService: NoteEntityService,
+    private loggerService: LoggerService,
 
 		id: string,
 		connection: Channel['connection'],
 	) {
 		super(id, connection);
-		//this.onEvent = this.onEvent.bind(this);
+    this.logger = this.loggerService.getLogger('kg-channel');
 	}
 
 	@bindThis
 	public async init(params: any) {
-		// this.antennaId = params.antennaId as string;
-
 		// Subscribe stream
 		this.subscriber.on(`kigurumiStream`, this.onEvent);
 	}
 
 	@bindThis
 	private async onEvent(data: GlobalEvents['kigurumi']['payload']) {
+		this.logger.info('onEvent');
+		this.logger.info(data.type);
+		this.logger.info(data.body.id);
 		if (data.type === 'note') {
 			const note = await this.noteEntityService.pack(data.body.id, this.user, { detail: true });
 

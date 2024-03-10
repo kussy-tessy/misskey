@@ -10,6 +10,9 @@ import { QueryService } from './QueryService.js';
 import type { NotesRepository } from '@/models/_.js';
 import { Brackets } from 'typeorm';
 import { GlobalEventService } from './GlobalEventService.js';
+import Logger from '@/logger.js';
+import { LoggerService } from '@/core/LoggerService.js';
+import { toSingle } from '@/misc/prelude/array.js';
 
 type KigurumiTimelineOptions = {
     untilId: string | null,
@@ -18,6 +21,8 @@ type KigurumiTimelineOptions = {
 
 @Injectable()
 export class KigurumiTimelineService {
+  private logger: Logger;
+
   constructor(
 		@Inject(DI.redisForTimelines)
 		private redisForTimelines: Redis.Redis,
@@ -29,7 +34,10 @@ export class KigurumiTimelineService {
     private fanoutTimelineService: FanoutTimelineService,
     private fanoutTimelineEndpointService: FanoutTimelineEndpointService,
 		private queryService: QueryService,
-  ) { }
+    private loggerService: LoggerService,
+  ) {
+    this.logger = this.loggerService.getLogger('kigurumiStream')
+   }
 
   @bindThis
   public async pushTLIfKigurumi(note: MiNote) {
@@ -39,6 +47,7 @@ export class KigurumiTimelineService {
       r.exec();
 
       this.globalEventService.publishKigurumiStream('note', note);
+      this.logger.info('push and publish')
     }
   }
 
@@ -65,6 +74,8 @@ export class KigurumiTimelineService {
 
     const hasFile = note.fileIds.length > 0
     const hasKigurumiHashTag = note.tags.includes('kigurumi') || note.tags.includes('着ぐるみ');
+
+    this.logger.info(note.tags.toString());
 
     // 添付ファイルがついていてハッシュタグに#kigurumi, #着ぐるみを含むか
     return hasFile && hasKigurumiHashTag;
