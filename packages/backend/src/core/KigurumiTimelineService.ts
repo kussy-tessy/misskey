@@ -90,8 +90,8 @@ export class KigurumiTimelineService {
 
       // ハッシュタグにkigurumi, 着ぐるみを含む
       query.andWhere(new Brackets(qb => {
-        qb.where('note.tags @> :tag', {tag: '着ぐるみ'})
-          .orWhere('note.tags @> :tag', {tag: 'kigurumi'})
+        qb.where('note.tags @> :tag', {tag: ['着ぐるみ']})
+          .orWhere('note.tags @> :tag', {tag: ['kigurumi']})
       }));
 
 		return await query.limit(limit).getMany();
