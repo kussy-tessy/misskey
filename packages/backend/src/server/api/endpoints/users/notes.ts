@@ -17,6 +17,7 @@ import { MiLocalUser } from '@/models/User.js';
 import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
 import { FanoutTimelineName } from '@/core/FanoutTimelineService.js';
 import { ApiError } from '@/server/api/error.js';
+import { KigurumiTimelineService } from '@/core/KigurumiTimelineService.js';
 
 export const meta = {
 	tags: ['users', 'notes'],
@@ -60,6 +61,7 @@ export const paramDef = {
 		untilDate: { type: 'integer' },
 		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
 		withFiles: { type: 'boolean', default: false },
+		kigurumi: { type: 'boolean', default: false }
 	},
 	required: ['userId'],
 } as const;
@@ -76,6 +78,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private idService: IdService,
 		private fanoutTimelineEndpointService: FanoutTimelineEndpointService,
 		private metaService: MetaService,
+		private kigurumiTimelineService: KigurumiTimelineService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const untilId = ps.untilId ?? (ps.untilDate ? this.idService.gen(ps.untilDate!) : null);
@@ -92,6 +95,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				if (userIdsWhoBlockingMe.has(ps.userId)) {
 					return [];
 				}
+			}
+
+			if (me && ps.kigurumi) {
+				return await this.kigurumiTimelineService.getFromDb({ sinceId, untilId, userId: ps.userId }, me);
 			}
 
 			if (!serverSettings.enableFanoutTimeline) {

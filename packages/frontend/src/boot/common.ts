@@ -90,6 +90,7 @@ export async function common(createVue: () => App<Element>) {
 			miLocalStorage.setItem('localeVersion', version);
 			updateLocale(parsedNewLocale);
 			updateI18n(parsedNewLocale);
+			console.log('debug。i18nがちゃんと動いていない気がする')
 		}
 	}
 	//#endregion

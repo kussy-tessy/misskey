@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<option :value="null">{{ i18n.ts.notes }}</option>
 			<option value="all">{{ i18n.ts.all }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
+			<option :v-if="showKigurumi" value="kigurumi">着ぐるみさん</option>
 		</MkTab>
 	</template>
 	<MkNotes :noGap="true" :pagination="pagination" :class="$style.tl"/>
@@ -23,12 +24,22 @@ import * as Misskey from 'misskey-js';
 import MkNotes from '@/components/MkNotes.vue';
 import MkTab from '@/components/MkTab.vue';
 import { i18n } from '@/i18n.js';
+import { $i } from '@/account.js';
 
 const props = defineProps<{
 	user: Misskey.entities.UserDetailed;
 }>();
 
 const tab = ref<string | null>('all');
+
+const showKigurumi = computed(()=>{
+	const isLoggedin = $i;
+	const isLocalUser = !props.user.host;
+
+	// ログインしてたら全ユーザーが見れる
+	// 非ログインならうちのローカルユーザーのみ見れる
+	return isLoggedin || (!isLoggedin && isLocalUser);
+})
 
 const pagination = computed(() => tab.value === 'featured' ? {
 	endpoint: 'users/featured-notes' as const,
@@ -45,6 +56,7 @@ const pagination = computed(() => tab.value === 'featured' ? {
 		withReplies: tab.value === 'all',
 		withChannelNotes: tab.value === 'all',
 		withFiles: tab.value === 'files',
+		kigurumi: tab.value === 'kigurumi',
 	},
 });
 </script>
