@@ -373,7 +373,7 @@ export class GlobalEventService {
 	}
 
 	@bindThis
-	public publishKigurumiStream<K extends keyof AntennaEventTypes>(antennaId: MiAntenna['id'], type: K, value?: AntennaEventTypes[K]): void {
+	public publishKigurumiStream<K extends keyof AntennaEventTypes>(type: K, value?: AntennaEventTypes[K]): void {
 		this.publish(`kigurumiStream`, type, typeof value === 'undefined' ? null : value);
 	}
 

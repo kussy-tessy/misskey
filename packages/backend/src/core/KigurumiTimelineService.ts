@@ -9,6 +9,7 @@ import type { MiLocalUser } from '@/models/User.js';
 import { QueryService } from './QueryService.js';
 import type { NotesRepository } from '@/models/_.js';
 import { Brackets } from 'typeorm';
+import { GlobalEventService } from './GlobalEventService.js';
 
 type KigurumiTimelineOptions = {
     untilId: string | null,
@@ -24,6 +25,7 @@ export class KigurumiTimelineService {
 		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
 
+    private globalEventService: GlobalEventService,
     private fanoutTimelineService: FanoutTimelineService,
     private fanoutTimelineEndpointService: FanoutTimelineEndpointService,
 		private queryService: QueryService,
@@ -35,6 +37,8 @@ export class KigurumiTimelineService {
       const r = this.redisForTimelines.pipeline();
       this.fanoutTimelineService.push('kigurumiTimeline', note.id, 100, r);
       r.exec();
+
+      this.globalEventService.publishKigurumiStream('note', note);
     }
   }
 
