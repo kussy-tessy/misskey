@@ -22,6 +22,7 @@ export class KigurumiTimelineService {
 		@Inject(DI.redisForTimelines)
 		private redisForTimelines: Redis.Redis,
 
+		@Inject(DI.notesRepository)
 		private notesRepository: NotesRepository,
 
     private fanoutTimelineService: FanoutTimelineService,
