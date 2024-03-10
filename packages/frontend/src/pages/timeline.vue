@@ -305,7 +305,8 @@ const headerTabs = computed(() => [...(defaultStore.reactiveState.pinnedUserList
 }] : []),
 {
 	key: 'kigurumi',
-	title: i18n.ts._timelines.kigurumi,
+	// title: i18n.ts._timelines.kigurumi,
+	title: '着ぐるみさん', // なぜかi18nが効かないので
 	icon: 'ti ti-photo-heart',
 	iconOnly: true
 },
