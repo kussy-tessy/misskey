@@ -168,6 +168,9 @@ function updatePaginationQuery() {
 	let endpoint: keyof Misskey.Endpoints | null;
 	let query: TimelineQueryType | null;
 
+	console.log({props})
+	console.log(props.src)
+
 	if (props.src === 'antenna') {
 		endpoint = 'antennas/notes';
 		query = {

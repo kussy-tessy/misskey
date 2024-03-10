@@ -5177,6 +5177,10 @@ export interface Locale extends ILocale {
             /**
              * 接続している他のすべてのサーバーからの投稿を見られます。
              */
+            "kigurumi": string;
+            /**
+             * 接続している他のすべてのサーバーからの投稿を見られます。
+             */
             "global": string;
             /**
              * それぞれのタイムラインは、画面上部でいつでも切り替えられます。
@@ -5311,6 +5315,10 @@ export interface Locale extends ILocale {
          * ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。
          */
         "social": string;
+        /**
+         * ソーシャルタイムラインには、ホームタイムラインとローカルタイムラインの投稿が両方表示されます。
+         */
+        "kigurumi": string;
         /**
          * グローバルタイムラインでは、接続している他のすべてのサーバーからの投稿を見られます。
          */
@@ -8565,6 +8573,10 @@ export interface Locale extends ILocale {
          * ソーシャル
          */
         "social": string;
+        /**
+         * ソーシャル
+         */
+        "kigurumi": string;
         /**
          * グローバル
          */
