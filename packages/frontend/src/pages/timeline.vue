@@ -280,6 +280,8 @@ const headerActions = computed(() => {
 	return tmp;
 });
 
+console.log(i18n);
+
 const headerTabs = computed(() => [...(defaultStore.reactiveState.pinnedUserLists.value.map(l => ({
 	key: 'list:' + l.id,
 	title: l.name,
