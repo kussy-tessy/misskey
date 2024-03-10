@@ -449,6 +449,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		$ImageProcessingService,
 		$InstanceActorService,
 		$InternalStorageService,
+		$KigurumiTimelineService,
 		$MetaService,
 		$MfmService,
 		$ModerationLogService,
