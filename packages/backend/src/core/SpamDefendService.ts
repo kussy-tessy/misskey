@@ -78,7 +78,8 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (!host) return 0;
 
     // ホワイトリストに含まれていれば調べるまでもなくOK
-    const reliableInstances = ['misskey.io', 'fedibird.com', 'mkkey.net']; // and so on
+    const reliableInstances = ['misskey.io', 'fedibird.com', 'mkkey.net', 'p1.a9z.dev', 'himagine.club',
+      'm.tkngh.jp', 'misskey-square.net', 'homoo.social'];
     if (reliableInstances.includes(host)) return 0;
 
     let score = 0
