@@ -263,7 +263,6 @@ const hashtags = computed(defaultStore.makeGetterSetter('postFormHashtags'));
 
 watch(text, () => {
 	checkMissingMention();
-	console.log(text.value)
 }, { immediate: true });
 
 watch(visibility, () => {
