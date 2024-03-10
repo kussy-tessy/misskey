@@ -124,7 +124,7 @@ const choose = async (ev) => {
 		icon: 'ti ti-planet',
 		action: () => { setSrc('local'); },
 	}, {
-		text: '着ぐるみさん' // なぜかi18nが効かない？？？
+		text: '着ぐるみさん', // なぜかi18nが効かない？？？
 		// text: i18n.ts._timelines.social,
 		icon: 'ti ti-universe',
 		action: () => { setSrc('social'); },
