@@ -53,7 +53,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 	constructor(
 		private activeUsersChart: ActiveUsersChart,
 		private idService: IdService,
-		// private kigurumiTimelineService: KigurumiTimelineService,
+		private kigurumiTimelineService: KigurumiTimelineService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const untilId = ps.untilId ?? (ps.untilDate ? this.idService.gen(ps.untilDate!) : null);
@@ -65,9 +65,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			// 	throw new ApiError(meta.errors.ltlDisabled);
 			// }
 
-			// const timeline = await this.kigurumiTimelineService.get(me, {
-			// 	untilId, sinceId
-			// });
+			const timeline = await this.kigurumiTimelineService.get(me, {
+				untilId, sinceId
+			});
 
 			process.nextTick(() => {
 				if (me) {
@@ -75,8 +75,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				}
 			});
 
-			return null;
-			// return timeline;
+			return timeline;
 		});
 	}
 }

@@ -18,7 +18,6 @@ type KigurumiTimelineOptions = {
 @Injectable()
 export class KigurumiTimelineService {
   constructor(
-
 		@Inject(DI.redisForTimelines)
 		private redisForTimelines: Redis.Redis,
 
@@ -38,8 +37,6 @@ export class KigurumiTimelineService {
       r.exec();
     }
   }
-
-  
 
   @bindThis
   public async get(me: MiLocalUser, options: KigurumiTimelineOptions){
@@ -93,7 +90,7 @@ export class KigurumiTimelineService {
 
       // ハッシュタグにkigurumi, 着ぐるみを含む
       query.andWhere(new Brackets(qb => {
-        query.where('note.tags @> :tag', {tag: '着ぐるみ'})
+        qb.where('note.tags @> :tag', {tag: '着ぐるみ'})
           .orWhere('note.tags @> :tag', {tag: 'kigurumi'})
       }));
 
