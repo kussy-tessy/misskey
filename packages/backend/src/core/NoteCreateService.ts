@@ -62,6 +62,7 @@ import { trackPromise } from '@/misc/promise-tracker.js';
 import { SpamDefendService } from './SpamDefendService.js';
 import { isNotNull } from '@/misc/is-not-null.js';
 import { IdentifiableError } from '@/misc/identifiable-error.js';
+import { KigurumiTimelineService } from './KigurumiTimelineService.js';
 
 type NotificationType = 'reply' | 'renote' | 'quote' | 'mention';
 
@@ -222,7 +223,8 @@ export class NoteCreateService implements OnApplicationShutdown {
 		private instanceChart: InstanceChart,
 		private utilityService: UtilityService,
 		private userBlockingService: UserBlockingService,
-		private spamDefendService: SpamDefendService
+		private spamDefendService: SpamDefendService,
+		private kigurumiTimelineService: KigurumiTimelineService
 	) { }
 
 	@bindThis
@@ -540,6 +542,9 @@ export class NoteCreateService implements OnApplicationShutdown {
 		this.pushToTl(note, user);
 
 		this.antennaService.addNoteToAntennas(note, user);
+		
+		// 着ぐるみタイムライン更新
+		this.kigurumiTimelineService.pushTLIfKigurumi(note);
 
 		if (data.reply) {
 			this.saveReply(data.reply, note);
