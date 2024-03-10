@@ -4,32 +4,28 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<XColumn :menu="menu" :column="column" :isStacked="isStacked" :refresher="() => timeline.reloadTimeline()">
-	<template #header>
-		<i v-if="column.tl === 'home'" class="ti ti-home"></i>
-		<i v-else-if="column.tl === 'local'" class="ti ti-planet"></i>
-		<i v-else-if="column.tl === 'social'" class="ti ti-universe"></i>
-		<i v-else-if="column.tl === 'global'" class="ti ti-whirl"></i>
-		<span style="margin-left: 8px;">{{ column.name }}</span>
-	</template>
+	<XColumn :menu="menu" :column="column" :isStacked="isStacked" :refresher="() => timeline.reloadTimeline()">
+		<template #header>
+			<i v-if="column.tl === 'home'" class="ti ti-home"></i>
+			<i v-else-if="column.tl === 'local'" class="ti ti-planet"></i>
+			<i v-else-if="column.tl === 'social'" class="ti ti-universe"></i>
+			<i v-else-if="column.tl === 'kigurumi'" class="ti ti-photo-heart"></i>
+			<i v-else-if="column.tl === 'global'" class="ti ti-whirl"></i>
+			<span style="margin-left: 8px;">{{ column.name }}</span>
+		</template>
 
-	<div v-if="(((column.tl === 'local' || column.tl === 'social') && !isLocalTimelineAvailable) || (column.tl === 'global' && !isGlobalTimelineAvailable))" :class="$style.disabled">
-		<p :class="$style.disabledTitle">
-			<i class="ti ti-circle-minus"></i>
-			{{ i18n.ts._disabledTimeline.title }}
-		</p>
-		<p :class="$style.disabledDescription">{{ i18n.ts._disabledTimeline.description }}</p>
-	</div>
-	<MkTimeline
-		v-else-if="column.tl"
-		ref="timeline"
-		:key="column.tl + withRenotes + withReplies + onlyFiles"
-		:src="column.tl"
-		:withRenotes="withRenotes"
-		:withReplies="withReplies"
-		:onlyFiles="onlyFiles"
-	/>
-</XColumn>
+		<div
+			v-if="(((column.tl === 'local' || column.tl === 'social') && !isLocalTimelineAvailable) || (column.tl === 'kigurumi' && !isKigurumiTimelineAvailable) || (column.tl === 'global' && !isGlobalTimelineAvailable))"
+			:class="$style.disabled">
+			<p :class="$style.disabledTitle">
+				<i class="ti ti-circle-minus"></i>
+				{{ i18n.ts._disabledTimeline.title }}
+			</p>
+			<p :class="$style.disabledDescription">{{ i18n.ts._disabledTimeline.description }}</p>
+		</div>
+		<MkTimeline v-else-if="column.tl" ref="timeline" :key="column.tl + withRenotes + withReplies + onlyFiles"
+			:src="column.tl" :withRenotes="withRenotes" :withReplies="withReplies" :onlyFiles="onlyFiles" />
+	</XColumn>
 </template>
 
 <script lang="ts" setup>
@@ -41,6 +37,7 @@ import * as os from '@/os.js';
 import { $i } from '@/account.js';
 import { i18n } from '@/i18n.js';
 import { instance } from '@/instance.js';
+import column from './column.vue';
 
 const props = defineProps<{
 	column: Column;
@@ -52,6 +49,7 @@ const timeline = shallowRef<InstanceType<typeof MkTimeline>>();
 
 const isLocalTimelineAvailable = (($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable));
 const isGlobalTimelineAvailable = (($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable));
+const isKigurumiTimelineAvailable = $i !== null;
 const withRenotes = ref(props.column.withRenotes ?? true);
 const withReplies = ref(props.column.withReplies ?? false);
 const onlyFiles = ref(props.column.onlyFiles ?? false);
@@ -94,6 +92,8 @@ async function setType() {
 		}, {
 			value: 'social' as const, text: i18n.ts._timelines.social,
 		}, {
+			value: 'kigurumi' as const, text: i18n.ts._timelines.kigurumi,
+		}, {
 			value: 'global' as const, text: i18n.ts._timelines.global,
 		}],
 	});
@@ -108,25 +108,32 @@ async function setType() {
 	});
 }
 
-const menu = [{
-	icon: 'ti ti-pencil',
-	text: i18n.ts.timeline,
-	action: setType,
-}, {
-	type: 'switch',
-	text: i18n.ts.showRenotes,
-	ref: withRenotes,
-}, props.column.tl === 'local' || props.column.tl === 'social' ? {
-	type: 'switch',
-	text: i18n.ts.showRepliesToOthersInTimeline,
-	ref: withReplies,
-	disabled: onlyFiles,
-} : undefined, {
-	type: 'switch',
-	text: i18n.ts.fileAttachedOnly,
-	ref: onlyFiles,
-	disabled: props.column.tl === 'local' || props.column.tl === 'social' ? withReplies : false,
-}];
+const menu =
+	props.column.tl === 'kigurumi' ?
+		[{
+			icon: 'ti ti-pencil',
+			text: i18n.ts.timeline,
+			action: setType,
+		}] :
+		[{
+			icon: 'ti ti-pencil',
+			text: i18n.ts.timeline,
+			action: setType,
+		}, {
+			type: 'switch',
+			text: i18n.ts.showRenotes,
+			ref: withRenotes,
+		}, props.column.tl === 'local' || props.column.tl === 'social' ? {
+			type: 'switch',
+			text: i18n.ts.showRepliesToOthersInTimeline,
+			ref: withReplies,
+			disabled: onlyFiles,
+		} : undefined, {
+			type: 'switch',
+			text: i18n.ts.fileAttachedOnly,
+			ref: onlyFiles,
+			disabled: props.column.tl === 'local' || props.column.tl === 'social' ? withReplies : false,
+		}];
 </script>
 
 <style lang="scss" module>

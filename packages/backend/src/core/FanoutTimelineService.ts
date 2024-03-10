@@ -38,6 +38,9 @@ export type FanoutTimelineName =
 	// role timelines
 	| `roleTimeline:${string}` // any notes are included
 
+	// kigurumi timeline
+	| `kigurumiTimeline`
+
 @Injectable()
 export class FanoutTimelineService {
 	constructor(

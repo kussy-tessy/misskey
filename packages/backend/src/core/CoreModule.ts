@@ -29,6 +29,7 @@ import { IdService } from './IdService.js';
 import { ImageProcessingService } from './ImageProcessingService.js';
 import { InstanceActorService } from './InstanceActorService.js';
 import { InternalStorageService } from './InternalStorageService.js';
+import { KigurumiTimelineService } from './KigurumiTimelineService.js';
 import { MetaService } from './MetaService.js';
 import { MfmService } from './MfmService.js';
 import { ModerationLogService } from './ModerationLogService.js';
@@ -168,6 +169,7 @@ const $IdService: Provider = { provide: 'IdService', useExisting: IdService };
 const $ImageProcessingService: Provider = { provide: 'ImageProcessingService', useExisting: ImageProcessingService };
 const $InstanceActorService: Provider = { provide: 'InstanceActorService', useExisting: InstanceActorService };
 const $InternalStorageService: Provider = { provide: 'InternalStorageService', useExisting: InternalStorageService };
+const $KigurumiTimelineService: Provider = { provide: 'KigurumiTimelineService', useExisting: KigurumiTimelineService };
 const $MetaService: Provider = { provide: 'MetaService', useExisting: MetaService };
 const $MfmService: Provider = { provide: 'MfmService', useExisting: MfmService };
 const $ModerationLogService: Provider = { provide: 'ModerationLogService', useExisting: ModerationLogService };
@@ -185,7 +187,7 @@ const $RelayService: Provider = { provide: 'RelayService', useExisting: RelaySer
 const $RoleService: Provider = { provide: 'RoleService', useExisting: RoleService };
 const $S3Service: Provider = { provide: 'S3Service', useExisting: S3Service };
 const $SignupService: Provider = { provide: 'SignupService', useExisting: SignupService };
-const $SpamDefendService: Provider = {provide: 'SpamDefendService', useExisting: SpamDefendService};
+const $SpamDefendService: Provider = { provide: 'SpamDefendService', useExisting: SpamDefendService };
 const $WebAuthnService: Provider = { provide: 'WebAuthnService', useExisting: WebAuthnService };
 const $UserBlockingService: Provider = { provide: 'UserBlockingService', useExisting: UserBlockingService };
 const $CacheService: Provider = { provide: 'CacheService', useExisting: CacheService };
@@ -309,6 +311,7 @@ const $ApQuestionService: Provider = { provide: 'ApQuestionService', useExisting
 		ImageProcessingService,
 		InstanceActorService,
 		InternalStorageService,
+		KigurumiTimelineService,
 		MetaService,
 		MfmService,
 		ModerationLogService,

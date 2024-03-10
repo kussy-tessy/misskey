@@ -29,7 +29,7 @@ import { defaultStore } from '@/store.js';
 import { Paging } from '@/components/MkPagination.vue';
 
 const props = withDefaults(defineProps<{
-	src: 'home' | 'local' | 'social' | 'global' | 'mentions' | 'directs' | 'list' | 'antenna' | 'channel' | 'role';
+	src: 'home' | 'local' | 'social' | 'kigurumi' | 'global' | 'mentions' | 'directs' | 'list' | 'antenna' | 'channel' | 'role';
 	list?: string;
 	antenna?: string;
 	channel?: string;
@@ -116,6 +116,12 @@ function connectChannel() {
 			withReplies: props.withReplies,
 			withFiles: props.onlyFiles ? true : undefined,
 		});
+	} else if (props.src === 'kigurumi') {
+		connection = stream.useChannel('kigurumiTimeline', {
+			// withRenotes: props.withRenotes,
+			// withReplies: props.withReplies,
+			// withFiles: props.onlyFiles ? true : undefined,
+		});
 	} else if (props.src === 'global') {
 		connection = stream.useChannel('globalTimeline', {
 			withRenotes: props.withRenotes,
@@ -187,6 +193,9 @@ function updatePaginationQuery() {
 			withReplies: props.withReplies,
 			withFiles: props.onlyFiles ? true : undefined,
 		};
+	} else if (props.src === 'kigurumi') {
+		endpoint = 'notes/kigurumi-timeline';
+		query = null;
 	} else if (props.src === 'global') {
 		endpoint = 'notes/global-timeline';
 		query = {

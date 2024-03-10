@@ -277,6 +277,10 @@ export type GlobalEvents = {
 		name: `antennaStream:${MiAntenna['id']}`;
 		payload: EventUnionFromDictionary<SerializedAll<AntennaEventTypes>>;
 	};
+	kigurumi: {
+		name: `kigurumiStream`;
+		payload: EventUnionFromDictionary<SerializedAll<AntennaEventTypes>>;
+	}
 	admin: {
 		name: `adminStream:${MiUser['id']}`;
 		payload: EventUnionFromDictionary<SerializedAll<AdminEventTypes>>;
@@ -366,6 +370,11 @@ export class GlobalEventService {
 	@bindThis
 	public publishAntennaStream<K extends keyof AntennaEventTypes>(antennaId: MiAntenna['id'], type: K, value?: AntennaEventTypes[K]): void {
 		this.publish(`antennaStream:${antennaId}`, type, typeof value === 'undefined' ? null : value);
+	}
+
+	@bindThis
+	public publishKigurumiStream<K extends keyof AntennaEventTypes>(antennaId: MiAntenna['id'], type: K, value?: AntennaEventTypes[K]): void {
+		this.publish(`kigurumiStream`, type, typeof value === 'undefined' ? null : value);
 	}
 
 	@bindThis
