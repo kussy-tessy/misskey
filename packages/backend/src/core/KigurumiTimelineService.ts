@@ -87,16 +87,19 @@ export class KigurumiTimelineService {
     const limit = 100;
     const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'),
       ps.sinceId, ps.untilId)
-      .andWhere('(note.visibility = \'public\')')
+      .andWhere('(note.visibility = \'public\')') // TODO: user/notesから飛んできたときはPublic以外もOKとする
       .innerJoinAndSelect('note.user', 'user')
       .leftJoinAndSelect('note.reply', 'reply')
       .leftJoinAndSelect('note.renote', 'renote')
       .leftJoinAndSelect('reply.user', 'replyUser')
       .leftJoinAndSelect('renote.user', 'renoteUser');
 
-    if(ps.userId){
-
+    if (ps.userId) {
+      query.where('note.userId = :userId', { userId: ps.userId });
     }
+
+    this.logger.info('Debug Kigurumi');
+
     this.queryService.generateVisibilityQuery(query, me);
     if (me) this.queryService.generateMutedUserQuery(query, me);
     if (me) this.queryService.generateBlockedUserQuery(query, me);
@@ -106,7 +109,7 @@ export class KigurumiTimelineService {
     query.andWhere('note.fileIds != \'{}\'');
 
     // ハッシュタグにkigurumi, 着ぐるみを含む
-    query.where('note.tags && :tag', { tag: ['着ぐるみ', 'kigurumi'] })
+    query.andWhere('note.tags && :tag', { tag: ['着ぐるみ', 'kigurumi'] })
 
     return await query.limit(limit).getMany();
   }
