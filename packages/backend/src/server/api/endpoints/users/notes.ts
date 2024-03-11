@@ -98,7 +98,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			}
 
 			if (me && ps.kigurumi) {
-				return await this.kigurumiTimelineService.getFromDb({ sinceId, untilId, userId: ps.userId }, me);
+				const timeline = await this.kigurumiTimelineService.getFromDb({ sinceId, untilId, userId: ps.userId }, me);
+				return await this.noteEntityService.packMany(timeline, me);
 			}
 
 			if (!serverSettings.enableFanoutTimeline) {
