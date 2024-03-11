@@ -95,7 +95,7 @@ export class KigurumiTimelineService {
       .leftJoinAndSelect('renote.user', 'renoteUser');
 
     if (ps.userId) {
-      query.where('note.userId = :userId', { userId: ps.userId });
+      query.andWhere('note.userId = :userId', { userId: ps.userId });
     }
 
     this.logger.info('Debug Kigurumi');
