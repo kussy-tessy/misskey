@@ -82,23 +82,16 @@ export class KigurumiTimelineService {
   public async getFromDb(ps: {
     sinceId: string | null,
     untilId: string | null,
-    userId?: string
   }, me: MiLocalUser) {
     const limit = 100;
     const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'),
       ps.sinceId, ps.untilId)
-      .andWhere('(note.visibility = \'public\')') // TODO: user/notesから飛んできたときはPublic以外もOKとする
+      .andWhere('(note.visibility = \'public\')')
       .innerJoinAndSelect('note.user', 'user')
       .leftJoinAndSelect('note.reply', 'reply')
       .leftJoinAndSelect('note.renote', 'renote')
       .leftJoinAndSelect('reply.user', 'replyUser')
       .leftJoinAndSelect('renote.user', 'renoteUser');
-
-    if (ps.userId) {
-      query.andWhere('note.userId = :userId', { userId: ps.userId });
-    }
-
-    this.logger.info('Debug Kigurumi');
 
     this.queryService.generateVisibilityQuery(query, me);
     if (me) this.queryService.generateMutedUserQuery(query, me);

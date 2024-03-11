@@ -97,12 +97,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				}
 			}
 
-			if (me && ps.kigurumi) {
-				const timeline = await this.kigurumiTimelineService.getFromDb({ sinceId, untilId, userId: ps.userId }, me);
-				return await this.noteEntityService.packMany(timeline, me);
-			}
-
-			if (!serverSettings.enableFanoutTimeline) {
+			if (!serverSettings.enableFanoutTimeline || (me && ps.kigurumi)) {
+				// ログイン済みユーザーかつ着ぐるみさんを抽出の場合も、DBに問い合わせる
 				const timeline = await this.getFromDb({
 					untilId,
 					sinceId,
@@ -111,6 +107,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withChannelNotes: ps.withChannelNotes,
 					withFiles: ps.withFiles,
 					withRenotes: ps.withRenotes,
+					kigurumi: ps.kigurumi
 				}, me);
 
 				return await this.noteEntityService.packMany(timeline, me);
@@ -165,6 +162,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		withChannelNotes: boolean,
 		withFiles: boolean,
 		withRenotes: boolean,
+		kigurumi?: boolean
 	}, me: MiLocalUser | null) {
 		const isSelf = me && (me.id === ps.userId);
 
@@ -204,6 +202,14 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				qb.orWhere('note.fileIds != \'{}\'');
 				qb.orWhere('0 < (SELECT COUNT(*) FROM poll WHERE poll."noteId" = note.id)');
 			}));
+		}
+
+		if (ps.kigurumi) {
+			// 添付ファイルを含む
+			query.andWhere('note.fileIds != \'{}\'');
+
+			// ハッシュタグにkigurumi, 着ぐるみを含む
+			query.andWhere('note.tags && :tag', { tag: ['着ぐるみ', 'kigurumi'] })
 		}
 
 		return await query.limit(ps.limit).getMany();
