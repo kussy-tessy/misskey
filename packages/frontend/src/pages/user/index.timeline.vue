@@ -33,8 +33,10 @@ const props = defineProps<{
 const tab = ref<string | null>('all');
 
 const showKigurumi = computed(()=>{
-	const isLoggedin = $i;
+	const isLoggedin = $i != null;
 	const isLocalUser = !props.user.host;
+
+	console.log({isLoggedin, isLocalUser, user: props.user})
 
 	// ログインしてたら全ユーザーが見れる
 	// 非ログインならうちのローカルユーザーのみ見れる
