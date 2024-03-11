@@ -17,7 +17,7 @@ export default defineComponent({
 
 		return () => h('div', {
 			class: 'pxhvhrfw',
-		}, options.filter(option => !option.props?.hideKigurumi).map(option => withDirectives(h('button', {
+		}, options.filter(option => !option.props?.invisible).map(option => withDirectives(h('button', {
 			class: ['_button', { active: props.modelValue === option.props?.value }],
 			key: option.key as string,
 			disabled: props.modelValue === option.props?.value,
