@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<option :value="null">{{ i18n.ts.notes }}</option>
 			<option value="all">{{ i18n.ts.all }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
-			<option v-if="showKigurumi" value="kigurumi">着ぐるみさん</option>
+			<option :visible="showKigurumi" value="kigurumi">着ぐるみさん</option>
 		</MkTab>
 	</template>
 	<MkNotes :noGap="true" :pagination="pagination" :class="$style.tl"/>
