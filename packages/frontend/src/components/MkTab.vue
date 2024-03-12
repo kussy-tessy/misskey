@@ -17,16 +17,17 @@ export default defineComponent({
 
 		return () => h('div', {
 			class: 'pxhvhrfw',
-		}, options.filter(option => {console.log(option.props) ; return !option.props?.invisible; }).map(option => withDirectives(h('button', {
-			class: ['_button', { active: props.modelValue === option.props?.value }],
-			key: option.key as string,
-			disabled: props.modelValue === option.props?.value,
-			onClick: () => {
-				emit('update:modelValue', option.props?.value);
-			},
-		}, option.children ?? []), [
-			[resolveDirective('click-anime')],
-		])));
+		}, options.filter(option => option.props?.invisible === undefined || !option.props?.invisible)
+			.map(option => withDirectives(h('button', {
+				class: ['_button', { active: props.modelValue === option.props?.value }],
+				key: option.key as string,
+				disabled: props.modelValue === option.props?.value,
+				onClick: () => {
+					emit('update:modelValue', option.props?.value);
+				},
+			}, option.children ?? []), [
+				[resolveDirective('click-anime')],
+			])));
 	},
 });
 </script>
@@ -36,7 +37,7 @@ export default defineComponent({
 	display: flex;
 	font-size: 90%;
 
-	> button {
+	>button {
 		flex: 1;
 		padding: 10px 8px;
 		border-radius: 999px;
@@ -60,7 +61,7 @@ export default defineComponent({
 			margin-left: 8px;
 		}
 
-		> .icon {
+		>.icon {
 			margin-right: 6px;
 		}
 	}
@@ -70,7 +71,7 @@ export default defineComponent({
 	.pxhvhrfw {
 		font-size: 80%;
 
-		> button {
+		>button {
 			padding: 11px 8px;
 		}
 	}
