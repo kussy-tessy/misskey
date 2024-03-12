@@ -17,11 +17,7 @@ export default defineComponent({
 
 		return () => h('div', {
 			class: 'pxhvhrfw',
-		}, options.filter(option => {
-			console.log(option.props)
-			console.log(option.props?.invisible === undefined, !option.props?.invisible)
-			return option.props?.invisible === undefined || !option.props?.invisible
-		})
+		}, options.filter(option => option.props?.invisible === undefined || !option.props?.invisible)
 			.map(option => withDirectives(h('button', {
 				class: ['_button', { active: props.modelValue === option.props?.value }],
 				key: option.key as string,
