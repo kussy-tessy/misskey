@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<option :value="null">{{ i18n.ts.notes }}</option>
 			<option value="all">{{ i18n.ts.all }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
-			<option :visible="showKigurumi" value="kigurumi">着ぐるみさん</option>
+			<option :invisible="hideKigurumi" value="kigurumi">着ぐるみさん</option>
 		</MkTab>
 	</template>
 	<MkNotes :noGap="true" :pagination="pagination" :class="$style.tl"/>
@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const tab = ref<string | null>('all');
 
-const showKigurumi = computed(()=>{
+const hideKigurumi = computed(()=>{
 	const isLoggedin = $i != null;
 	const isLocalUser = !props.user.host;
 
