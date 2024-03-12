@@ -36,6 +36,8 @@ const hideKigurumi = computed(()=>{
 	const isLoggedin = $i != null;
 	const isLocalUser = !props.user.host;
 
+	console.log({isLoggedin, isLocalUser})
+
 	// ログインしてたら全ユーザーが見れる
 	// 非ログインならうちのローカルユーザーのみ見れる
 	return isLoggedin || (!isLoggedin && isLocalUser);
