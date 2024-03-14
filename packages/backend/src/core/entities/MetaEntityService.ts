@@ -91,7 +91,8 @@ export class MetaEntityService {
 			maxNoteTextLength: MAX_NOTE_TEXT_LENGTH,
 			// クライアントの手間を減らすためあらかじめJSONに変換しておく
 			defaultLightTheme: instance.defaultLightTheme ? JSON.stringify(JSON5.parse(instance.defaultLightTheme)) : null,
-			defaultDarkTheme: instance.defaultDarkTheme ? JSON.stringify(JSON5.parse(instance.defaultDarkTheme)) : null,
+			// defaultDarkTheme: instance.defaultDarkTheme ? JSON.stringify(JSON5.parse(instance.defaultDarkTheme)) : null,
+			defaultDarkTheme: null,
 			ads: ads.map(ad => ({
 				id: ad.id,
 				url: ad.url,
