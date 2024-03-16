@@ -4,10 +4,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[hide ? $style.hidden : $style.visible, (image.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive]" :style="darkMode ? '--c: rgb(255 255 255 / 2%);' : '--c: rgb(0 0 0 / 2%);'" @click="onclick">
-	<component
-		:is="disableImageLink ? 'div' : 'a'"
-		v-bind="disableImageLink ? {
+	<div
+		:class="[hide ? $style.hidden : $style.visible, (image.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive]"
+		:style="darkMode ? '--c: rgb(255 255 255 / 2%);' : '--c: rgb(0 0 0 / 2%);'" @click="onclick">
+		<component :is="disableImageLink ? 'div' : 'a'" v-bind="disableImageLink ? {
 			title: image.name,
 			class: $style.imageContainer,
 		} : {
@@ -15,39 +15,36 @@ SPDX-License-Identifier: AGPL-3.0-only
 			class: $style.imageContainer,
 			href: image.url,
 			style: 'cursor: zoom-in;'
-		}"
-	>
-		<ImgWithBlurhash
-			:hash="image.blurhash"
-			:src="(defaultStore.state.dataSaver.media && hide) ? null : url"
-			:forceBlurhash="hide"
-			:cover="hide || cover"
-			:alt="image.comment || image.name"
-			:title="image.comment || image.name"
-			:width="image.properties.width"
-			:height="image.properties.height"
-			:style="hide ? 'filter: brightness(0.7);' : null"
-		/>
-	</component>
-	<template v-if="hide">
-		<div :class="$style.hiddenText">
-			<div :class="$style.hiddenTextWrapper">
-				<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}</b>
-				<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ defaultStore.state.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}</b>
-				<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
+		}">
+			<ImgWithBlurhash :hash="image.blurhash" :src="(defaultStore.state.dataSaver.media && hide) ? null : url"
+				:forceBlurhash="hide" :cover="hide || cover" :blurCafeully="blurCarefully" :alt="image.comment || image.name"
+				:title="image.comment || image.name" :width="image.properties.width" :height="image.properties.height"
+				:style="hide ? 'filter: brightness(0.7);' : null" />
+		</component>
+		<template v-if="hide">
+			<div :class="$style.hiddenText">
+				<div :class="$style.hiddenTextWrapper">
+					<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive
+						}}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})`
+			: '' }}</b>
+					<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ defaultStore.state.dataSaver.media &&
+			image.size ? bytes(image.size) : i18n.ts.image }}</b>
+					<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
+				</div>
 			</div>
-		</div>
-	</template>
-	<template v-else-if="controls">
-		<div :class="$style.indicators">
-			<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
-			<div v-if="image.comment" :class="$style.indicator">ALT</div>
-			<div v-if="image.isSensitive" :class="$style.indicator" style="color: var(--warn);" :title="i18n.ts.sensitive"><i class="ti ti-eye-exclamation"></i></div>
-		</div>
-		<button :class="$style.menu" class="_button" @click.stop="showMenu"><i class="ti ti-dots" style="vertical-align: middle;"></i></button>
-		<i class="ti ti-eye-off" :class="$style.hide" @click.stop="hide = true"></i>
-	</template>
-</div>
+		</template>
+		<template v-else-if="controls">
+			<div :class="$style.indicators">
+				<div v-if="['image/gif', 'image/apng'].includes(image.type)" :class="$style.indicator">GIF</div>
+				<div v-if="image.comment" :class="$style.indicator">ALT</div>
+				<div v-if="image.isSensitive" :class="$style.indicator" style="color: var(--warn);" :title="i18n.ts.sensitive">
+					<i class="ti ti-eye-exclamation"></i></div>
+			</div>
+			<button :class="$style.menu" class="_button" @click.stop="showMenu"><i class="ti ti-dots"
+					style="vertical-align: middle;"></i></button>
+			<i class="ti ti-eye-off" :class="$style.hide" @click.stop="hide = true"></i>
+		</template>
+	</div>
 </template>
 
 <script lang="ts" setup>
@@ -74,6 +71,7 @@ const props = withDefaults(defineProps<{
 });
 
 const hide = ref(true);
+const blurCarefully = ref(true);
 const darkMode = ref<boolean>(defaultStore.state.darkMode);
 
 const url = computed(() => (props.raw || defaultStore.state.loadRawImages)
@@ -89,12 +87,17 @@ function onclick() {
 	}
 	if (hide.value) {
 		hide.value = false;
+		return;
+	}
+	if (blurCarefully.value) {
+		blurCarefully.value = false;
 	}
 }
 
 // Plugin:register_note_view_interruptor を使って書き換えられる可能性があるためwatchする
 watch(() => props.image, () => {
 	hide.value = (defaultStore.state.nsfw === 'force' || defaultStore.state.dataSaver.media) ? true : (props.image.isSensitive && defaultStore.state.nsfw !== 'ignore');
+	blurCarefully.value = hide.value;
 }, {
 	deep: true,
 	immediate: true,

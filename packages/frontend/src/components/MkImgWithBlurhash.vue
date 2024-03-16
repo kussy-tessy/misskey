@@ -4,20 +4,21 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="root" :class="['chromatic-ignore', $style.root, { [$style.cover]: cover }]" :title="title ?? ''">
-	<TransitionGroup
-		:duration="defaultStore.state.animation && props.transition?.duration || undefined"
-		:enterActiveClass="defaultStore.state.animation && props.transition?.enterActiveClass || undefined"
-		:leaveActiveClass="defaultStore.state.animation && (props.transition?.leaveActiveClass ?? $style.transition_leaveActive) || undefined"
-		:enterFromClass="defaultStore.state.animation && props.transition?.enterFromClass || undefined"
-		:leaveToClass="defaultStore.state.animation && props.transition?.leaveToClass || undefined"
-		:enterToClass="defaultStore.state.animation && props.transition?.enterToClass || undefined"
-		:leaveFromClass="defaultStore.state.animation && props.transition?.leaveFromClass || undefined"
-	>
-		<canvas v-show="hide" key="canvas" ref="canvas" :class="$style.canvas" :width="canvasWidth" :height="canvasHeight" :title="title ?? undefined"/>
-		<img v-show="!hide" key="img" ref="img" :height="imgHeight" :width="imgWidth" :class="$style.img" :src="src ?? undefined" :title="title ?? undefined" :alt="alt ?? undefined" loading="eager" decoding="async"/>
-	</TransitionGroup>
-</div>
+	<div ref="root" :class="['chromatic-ignore', $style.root, { [$style.cover]: cover }]" :title="title ?? ''">
+		<TransitionGroup :duration="defaultStore.state.animation && props.transition?.duration || undefined"
+			:enterActiveClass="defaultStore.state.animation && props.transition?.enterActiveClass || undefined"
+			:leaveActiveClass="defaultStore.state.animation && (props.transition?.leaveActiveClass ?? $style.transition_leaveActive) || undefined"
+			:enterFromClass="defaultStore.state.animation && props.transition?.enterFromClass || undefined"
+			:leaveToClass="defaultStore.state.animation && props.transition?.leaveToClass || undefined"
+			:enterToClass="defaultStore.state.animation && props.transition?.enterToClass || undefined"
+			:leaveFromClass="defaultStore.state.animation && props.transition?.leaveFromClass || undefined">
+			<canvas v-show="hide" key="canvas" ref="canvas" :class="$style.canvas" :width="canvasWidth" :height="canvasHeight"
+				:title="title ?? undefined" />
+			<img v-show="!hide" key="img" ref="img" :height="imgHeight" :width="imgWidth"
+				:class="[$style.img, { [$style['img-blur']]: props.blurCarefully }]" :src="src ?? undefined"
+				:title="title ?? undefined" :alt="alt ?? undefined" loading="eager" decoding="async" />
+		</TransitionGroup>
+	</div>
 </template>
 
 <script lang="ts">
@@ -80,6 +81,7 @@ const props = withDefaults(defineProps<{
 	width?: number;
 	cover?: boolean;
 	forceBlurhash?: boolean;
+	blurCarefully: boolean,
 	onlyAvgColor?: boolean; // 軽量化のためにBlurhashを使わずに平均色だけを描画
 }>(), {
 	transition: null,
@@ -90,6 +92,7 @@ const props = withDefaults(defineProps<{
 	width: 64,
 	cover: true,
 	forceBlurhash: false,
+	blurCarefully: true,
 	onlyAvgColor: false,
 });
 
@@ -232,14 +235,16 @@ onUnmounted(() => {
 	top: 0;
 	left: 0;
 }
+
 .root {
 	position: relative;
 	width: 100%;
 	height: 100%;
 
 	&.cover {
-		> .canvas,
-		> .img {
+
+		>.canvas,
+		>.img {
 			object-fit: cover;
 		}
 	}
@@ -258,5 +263,9 @@ onUnmounted(() => {
 
 .img {
 	object-fit: contain;
+}
+
+.img-blur {
+	filter: blur(5px);
 }
 </style>

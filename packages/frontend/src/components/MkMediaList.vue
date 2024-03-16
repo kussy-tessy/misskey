@@ -175,6 +175,8 @@ onMounted(() => {
 
 	lightbox.init();
 
+	console.log('lightbox is initialized')
+
 	window.addEventListener('popstate', popstateHandler);
 
 	lightbox.on('beforeOpen', () => {
