@@ -597,6 +597,7 @@ export function getRenoteMenu(props: {
 			}
 		};
 
+		console.log('why')
 		if (addedVisibility === 'public') {
 			normalRenoteItems.push(...[{
 				text: 'ホームにリノート',
@@ -607,6 +608,7 @@ export function getRenoteMenu(props: {
 				icon: 'ti ti-repeat',
 				action: () => actionVisibility('followers')
 			}])
+			console.log('public!')
 		}
 
 		if (addedVisibility === 'home') {
