@@ -597,7 +597,7 @@ export function getRenoteMenu(props: {
 			}
 		};
 
-		console.log('why')
+		console.log(addedVisibility)
 		if (addedVisibility === 'public') {
 			normalRenoteItems.push(...[{
 				text: 'ホームにリノート',
