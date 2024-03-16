@@ -135,6 +135,8 @@ onMounted(() => {
 	});
 
 	lightbox.on('itemData', (ev) => {
+		console.log('id')
+
 		const { itemData } = ev;
 
 		// element is children
@@ -157,6 +159,7 @@ onMounted(() => {
 	});
 
 	lightbox.on('uiRegister', () => {
+		console.log('uir')
 		lightbox?.pswp?.ui?.registerElement({
 			name: 'altText',
 			className: 'pwsp__alt-text-container',
@@ -175,11 +178,10 @@ onMounted(() => {
 
 	lightbox.init();
 
-	console.log('lightbox is initialized')
-
 	window.addEventListener('popstate', popstateHandler);
 
 	lightbox.on('beforeOpen', () => {
+		console.log('befo')
 		history.pushState(null, '', '#pswp');
 	});
 

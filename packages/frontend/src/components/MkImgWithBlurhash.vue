@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<canvas v-show="hide" key="canvas" ref="canvas" :class="$style.canvas" :width="canvasWidth" :height="canvasHeight"
 				:title="title ?? undefined" />
 			<img v-show="!hide" key="img" ref="img" :height="imgHeight" :width="imgWidth"
-				:class="$style.img" :src="src ?? undefined"
+				:class="[$style.img, {[$style.imgblur]: props.blurCarefully}]" :src="src ?? undefined"
 				:title="title ?? undefined" :alt="alt ?? undefined" loading="eager" decoding="async" />
 		</TransitionGroup>
 	</div>
@@ -265,7 +265,7 @@ onUnmounted(() => {
 	object-fit: contain;
 }
 
-.img-blur {
+.imgblur {
 	filter: blur(5px);
 }
 </style>
