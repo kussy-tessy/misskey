@@ -526,8 +526,7 @@ export function getRenoteMenu(props: {
 		}]);
 	}
 
-	// チャンネルはよく分からんので無視
-	let addedVisibility;
+
 
 	if (!appearNote.channel || appearNote.channel.allowRenoteToExternal) {
 		normalRenoteItems.push(...[{
@@ -551,8 +550,6 @@ export function getRenoteMenu(props: {
 					visibility = smallerVisibility(visibility, 'home');
 				}
 
-				addedVisibility = visibility;
-
 				if (!props.mock) {
 					misskeyApi('notes/create', {
 						localOnly,
@@ -575,6 +572,22 @@ export function getRenoteMenu(props: {
 
 		// 可視性を下げてリノート
 		// 順番が微妙になるけど、上のコードに挟みたくない（コンフリクトがつらい感じになりそう）
+
+		// チャンネルはよく分からんので無視する
+		// 本当はこの処理をここに書きたくないけど、actionの関数の中に入れられてしまっているため、遅延評価になってしまう。
+		// ので関数の外で評価して備える。
+		const addingVisibility = (() => {
+			const configuredVisibility = defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility;
+
+			let visibility = appearNote.visibility;
+			visibility = smallerVisibility(visibility, configuredVisibility);
+			if (appearNote.channel?.isSensitive) {
+				visibility = smallerVisibility(visibility, 'home');
+			}
+
+			return visibility;
+		})();
+
 		const actionVisibility = (visibility) => {
 			const el = props.renoteButton.value;
 			if (el) {
@@ -597,8 +610,7 @@ export function getRenoteMenu(props: {
 			}
 		};
 
-		console.log(addedVisibility)
-		if (addedVisibility === 'public') {
+		if (addingVisibility === 'public') {
 			normalRenoteItems.push(...[{
 				text: 'ホームにリノート',
 				icon: 'ti ti-repeat',
@@ -611,7 +623,7 @@ export function getRenoteMenu(props: {
 			console.log('public!')
 		}
 
-		if (addedVisibility === 'home') {
+		if (addingVisibility === 'home') {
 			normalRenoteItems.push({
 				text: 'フォロワー限定でリノート',
 				icon: 'ti ti-repeat',
