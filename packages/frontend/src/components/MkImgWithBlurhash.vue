@@ -26,6 +26,7 @@ import DrawBlurhash from '@/workers/draw-blurhash?worker';
 import TestWebGL2 from '@/workers/test-webgl2?worker';
 import { WorkerMultiDispatch } from '@/scripts/worker-multi-dispatch.js';
 import { extractAvgColorFromBlurhash } from '@/scripts/extract-avg-color-from-blurhash.js';
+import emojiEditDialog from '@/pages/emoji-edit-dialog.vue';
 
 const canvasPromise = new Promise<WorkerMultiDispatch | HTMLCanvasElement>(resolve => {
 	// テスト環境で Web Worker インスタンスは作成できない
@@ -58,7 +59,7 @@ const canvasPromise = new Promise<WorkerMultiDispatch | HTMLCanvasElement>(resol
 </script>
 
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, onUnmounted, shallowRef, watch, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, shallowRef, watch, ref, emit } from 'vue';
 import { v4 as uuid } from 'uuid';
 import { render } from 'buraha';
 import { defaultStore } from '@/store.js';
@@ -95,6 +96,8 @@ const props = withDefaults(defineProps<{
 	blurCarefully: false,
 	onlyAvgColor: false,
 });
+
+const emit = defineEmits(['unlockBlur'])
 
 const viewId = uuid();
 const canvas = shallowRef<HTMLCanvasElement>();
@@ -210,6 +213,7 @@ function onClick(ev) {
 	if (props.blurCarefully) {
 		ev.stopPropagation();
 		ev.preventDefault();
+		emit('unlockBlur')
 		return false;
 	}
 	return true;
