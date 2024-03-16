@@ -355,7 +355,7 @@ export function getNoteMenu(props: {
 				{ type: 'divider' },
 				appearNote.userId !== $i.id ? getAbuseNoteMenu(appearNote, i18n.ts.reportAbuse) : undefined,
 			]
-			: []
+				: []
 			),
 			...(appearNote.channel && (appearNote.channel.userId === $i.id || $i.isModerator || $i.isAdmin) ? [
 				{ type: 'divider' },
@@ -391,7 +391,7 @@ export function getNoteMenu(props: {
 					},
 				},
 			]
-			: []
+				: []
 			),
 			...(appearNote.userId === $i.id || $i.isModerator || $i.isAdmin ? [
 				{ type: 'divider' },
@@ -406,7 +406,7 @@ export function getNoteMenu(props: {
 					danger: true,
 					action: del,
 				}]
-			: []
+				: []
 			)]
 			.filter(x => x !== undefined);
 	} else {
@@ -419,13 +419,13 @@ export function getNoteMenu(props: {
 			text: i18n.ts.copyContent,
 			action: copyContent,
 		}, getCopyNoteLinkMenu(appearNote, i18n.ts.copyLink)
-		, (appearNote.url || appearNote.uri) ? {
-			icon: 'ti ti-external-link',
-			text: i18n.ts.showOnRemote,
-			action: () => {
-				window.open(appearNote.url ?? appearNote.uri, '_blank', 'noopener');
-			},
-		} : undefined]
+			, (appearNote.url || appearNote.uri) ? {
+				icon: 'ti ti-external-link',
+				text: i18n.ts.showOnRemote,
+				action: () => {
+					window.open(appearNote.url ?? appearNote.uri, '_blank', 'noopener');
+				},
+			} : undefined]
 			.filter(x => x !== undefined);
 	}
 
@@ -526,6 +526,9 @@ export function getRenoteMenu(props: {
 		}]);
 	}
 
+	// チャンネルはよく分からんので無視
+	let addedVisibility;
+
 	if (!appearNote.channel || appearNote.channel.allowRenoteToExternal) {
 		normalRenoteItems.push(...[{
 			text: i18n.ts.renote,
@@ -548,6 +551,8 @@ export function getRenoteMenu(props: {
 					visibility = smallerVisibility(visibility, 'home');
 				}
 
+				addedVisibility = visibility;
+
 				if (!props.mock) {
 					misskeyApi('notes/create', {
 						localOnly,
@@ -567,6 +572,50 @@ export function getRenoteMenu(props: {
 				});
 			},
 		}]);
+
+		// 可視性を下げてリノート
+		// 順番が微妙になるけど、上のコードに挟みたくない（コンフリクトがつらい感じになりそう）
+		const actionVisibility = (visibility) => {
+			const el = props.renoteButton.value;
+			if (el) {
+				const rect = el.getBoundingClientRect();
+				const x = rect.left + (el.offsetWidth / 2);
+				const y = rect.top + (el.offsetHeight / 2);
+				os.popup(MkRippleEffect, { x, y }, {}, 'end');
+			}
+
+			const localOnly = defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly;
+
+			if (!props.mock) {
+				misskeyApi('notes/create', {
+					localOnly,
+					visibility,
+					renoteId: appearNote.id,
+				}).then(() => {
+					os.toast(i18n.ts.renoted);
+				});
+			}
+		};
+
+		if (addedVisibility === 'public') {
+			normalRenoteItems.push(...[{
+				text: 'ホームにリノート',
+				icon: 'ti ti-repeat',
+				action: () => actionVisibility('home')
+			}, {
+				text: 'フォロワー限定でリノート',
+				icon: 'ti ti-repeat',
+				action: () => actionVisibility('followers')
+			}])
+		}
+
+		if (addedVisibility === 'home') {
+			normalRenoteItems.push({
+				text: 'フォロワー限定でリノート',
+				icon: 'ti ti-repeat',
+				action: () => actionVisibility('followers')
+			})
+		}
 	}
 
 	const renoteItems = [
