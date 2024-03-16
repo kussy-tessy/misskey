@@ -119,7 +119,7 @@ export const defaultStore = markRaw(new Storage('base', {
 	},
 	reactions: {
 		where: 'account',
-		default: ['👍', '❤️', '😆', ':kawaii', ':saikou:', ':ablobcatcry:', ':ablobcatnodfast:', ':meow_hearts:', 'ablobcatfloofpat', ':resonyance', ':igyo:', 'wakaru'],
+		default: ['👍', '❤️', '😆', ':kawaii:', ':saikou:', ':ablobcatcry:', ':ablobcatnodfast:', ':meow_hearts:', ':ablobcatfloofpat:', ':resonyance:', ':igyo:', ':wakaru:'],
 	},
 	pinnedEmojis: {
 		where: 'account',
