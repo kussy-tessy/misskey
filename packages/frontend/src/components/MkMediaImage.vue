@@ -90,6 +90,7 @@ function onclick() {
 		return;
 	}
 	if (blurCarefully.value) {
+		console.log('blur')
 		blurCarefully.value = false;
 	}
 }

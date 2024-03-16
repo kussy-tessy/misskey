@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				:title="title ?? undefined" />
 			<img v-show="!hide" key="img" ref="img" :height="imgHeight" :width="imgWidth"
 				:class="[$style.img, {[$style.imgblur]: props.blurCarefully}]" :src="src ?? undefined"
-				:title="title ?? undefined" :alt="alt ?? undefined" loading="eager" decoding="async" />
+				:title="title ?? undefined" :alt="alt ?? undefined" loading="eager" @click.stop="" decoding="async" />
 		</TransitionGroup>
 	</div>
 </template>
