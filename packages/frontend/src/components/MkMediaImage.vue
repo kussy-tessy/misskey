@@ -17,7 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			style: 'cursor: zoom-in;'
 		}">
 			<ImgWithBlurhash :hash="image.blurhash" :src="(defaultStore.state.dataSaver.media && hide) ? null : url"
-				:forceBlurhash="hide" :cover="hide || cover" :blurCafeully="blurCarefully" :alt="image.comment || image.name"
+				:forceBlurhash="hide" :cover="hide || cover" :blurCarefully="blurCarefully" :alt="image.comment || image.name"
 				:title="image.comment || image.name" :width="image.properties.width" :height="image.properties.height"
 				:style="hide ? 'filter: brightness(0.7);' : null" />
 		</component>
@@ -89,6 +89,7 @@ function onclick() {
 		hide.value = false;
 		return;
 	}
+	console.log('1111')
 	if (blurCarefully.value) {
 		console.log('blur')
 		blurCarefully.value = false;

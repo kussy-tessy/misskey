@@ -81,7 +81,7 @@ const props = withDefaults(defineProps<{
 	width?: number;
 	cover?: boolean;
 	forceBlurhash?: boolean;
-	blurCarefully: boolean,
+	blurCarefully?: boolean,
 	onlyAvgColor?: boolean; // 軽量化のためにBlurhashを使わずに平均色だけを描画
 }>(), {
 	transition: null,
@@ -92,7 +92,7 @@ const props = withDefaults(defineProps<{
 	width: 64,
 	cover: true,
 	forceBlurhash: false,
-	blurCarefully: true,
+	blurCarefully: false,
 	onlyAvgColor: false,
 });
 
@@ -107,6 +107,8 @@ const imgWidth = ref(props.width);
 const imgHeight = ref(props.height);
 const bitmapTmp = ref<CanvasImageSource | undefined>();
 const hide = computed(() => !loaded.value || props.forceBlurhash);
+
+console.log(props.blurCarefully)
 
 function waitForDecode() {
 	if (props.src != null && props.src !== '') {
