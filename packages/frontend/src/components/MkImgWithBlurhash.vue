@@ -111,8 +111,6 @@ const imgHeight = ref(props.height);
 const bitmapTmp = ref<CanvasImageSource | undefined>();
 const hide = computed(() => !loaded.value || props.forceBlurhash);
 
-console.log(props.blurCarefully)
-
 function waitForDecode() {
 	if (props.src != null && props.src !== '') {
 		nextTick()
