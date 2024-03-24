@@ -485,7 +485,8 @@ async function toggleLocalOnly() {
 		const confirm = await os.actions({
 			type: 'question',
 			title: i18n.ts.disableFederationConfirm,
-			text: i18n.ts.disableFederationConfirmWarn,
+			// text: i18n.ts.disableFederationConfirmWarn,
+			text: '「連合なし」にするとリモートに投稿が配送されません。これは着ぐるみ界隈民以外に見られることを想定しないような投稿に用います。本当に「連合なし」にしますか？',
 			actions: [
 				{
 					value: 'yes' as const,
