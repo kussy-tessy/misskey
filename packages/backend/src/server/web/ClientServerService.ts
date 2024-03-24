@@ -638,7 +638,7 @@ export class ClientServerService {
 				return await reply.view('flash', {
 					flash: _flash,
 					profile,
-					avatarUrl: _flash.user.avatarUrl,
+					avatarUrl: _flash.user.,
 					...await this.generateCommonPugData(meta),
 				});
 			} else {
