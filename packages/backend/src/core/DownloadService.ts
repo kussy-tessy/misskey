@@ -38,6 +38,9 @@ export class DownloadService {
 	public async downloadUrl(url: string, path: string): Promise<{
 		filename: string;
 	}> {
+		const ioUrl = (rawUrl) => rawUrl.replace('misskeyusercontent.com', 'misskeyusercontent.jp'); // ioの画像が壊れたことへの対処
+		url = ioUrl(url);
+
 		this.logger.info(`Downloading ${chalk.cyan(url)} to ${chalk.cyanBright(path)} ...`);
 
 		const timeout = 30 * 1000;

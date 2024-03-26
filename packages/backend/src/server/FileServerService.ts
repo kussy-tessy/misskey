@@ -91,6 +91,7 @@ export class FileServerService {
 			Params: { url: string; };
 			Querystring: { url?: string; };
 		}>('/proxy/:url*', async (request, reply) => {
+			this.logger.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 			return await this.proxyHandler(request, reply)
 				.catch(err => this.errorHandler(request, reply, err));
 		});
@@ -302,7 +303,7 @@ export class FileServerService {
 
 		if (this.config.externalMediaProxyEnabled && !mustOrigin) {
 			// 外部のメディアプロキシが有効なら、そちらにリダイレクト
-
+			this.logger.info("ここを通っている");
 			reply.header('Cache-Control', 'public, max-age=259200'); // 3 days
 
 			const url = new URL(`${this.config.mediaProxy}/${ioUrl(request.params.url) || ''}`);
@@ -318,6 +319,7 @@ export class FileServerService {
 		}
 
 		const url = ioUrl(rawUrl);
+		this.logger.info("urlは" + url);
 
 		// Create temp file
 		const file = await this.getStreamAndTypeFromUrl(url);
