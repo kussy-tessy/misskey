@@ -292,6 +292,7 @@ export class FileServerService {
 	private async proxyHandler(request: FastifyRequest<{ Params: { url: string; }; Querystring: { url?: string; }; }>, reply: FastifyReply) {
 		const rawUrl = 'url' in request.query ? request.query.url : 'https://' + request.params.url;
 		const ioUrl = (rawUrl) => rawUrl.replace('misskeyusercontent.com', 'misskeyusercontent.jp'); // ioの画像が壊れたことへの対処
+		const url = ioUrl(rawUrl);
 
 		if (typeof url !== 'string') {
 			reply.code(400);
@@ -317,9 +318,6 @@ export class FileServerService {
 				url.toString(),
 			);
 		}
-
-		const url = ioUrl(rawUrl);
-		this.logger.info("urlは" + url);
 
 		// Create temp file
 		const file = await this.getStreamAndTypeFromUrl(url);
