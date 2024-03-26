@@ -290,7 +290,7 @@ export class FileServerService {
 	@bindThis
 	private async proxyHandler(request: FastifyRequest<{ Params: { url: string; }; Querystring: { url?: string; }; }>, reply: FastifyReply) {
 		const rawUrl = 'url' in request.query ? request.query.url : 'https://' + request.params.url;
-		const url = rawUrl.replace('misskeyusercontent.com', 'misskeyusercontent.jp'); // ioの画像が壊れたことへの対処
+		const ioUrl = (rawUrl) => rawUrl.replace('misskeyusercontent.com', 'misskeyusercontent.jp'); // ioの画像が壊れたことへの対処
 
 		if (typeof url !== 'string') {
 			reply.code(400);
@@ -305,7 +305,7 @@ export class FileServerService {
 
 			reply.header('Cache-Control', 'public, max-age=259200'); // 3 days
 
-			const url = new URL(`${this.config.mediaProxy}/${request.params.url || ''}`);
+			const url = new URL(`${this.config.mediaProxy}/${ioUrl(request.params.url) || ''}`);
 
 			for (const [key, value] of Object.entries(request.query)) {
 				url.searchParams.append(key, value);
@@ -316,6 +316,8 @@ export class FileServerService {
 				url.toString(),
 			);
 		}
+
+		const url = ioUrl(rawUrl);
 
 		// Create temp file
 		const file = await this.getStreamAndTypeFromUrl(url);
