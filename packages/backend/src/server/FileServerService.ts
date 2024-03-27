@@ -91,7 +91,6 @@ export class FileServerService {
 			Params: { url: string; };
 			Querystring: { url?: string; };
 		}>('/proxy/:url*', async (request, reply) => {
-			this.logger.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 			return await this.proxyHandler(request, reply)
 				.catch(err => this.errorHandler(request, reply, err));
 		});
