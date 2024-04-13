@@ -98,8 +98,8 @@ export class NoteEntityService implements OnModuleInit {
 			}
 		}
 
-		// 連合なし、かつ visibility が home で未ログインなら非表示
-		if(packedNote.localOnly && packedNote.visibility === 'home' && !meId){
+		// 連合なしで未ログインなら非表示
+		if(packedNote.localOnly && !meId){
 			hide = true;
 		}
 
