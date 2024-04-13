@@ -129,6 +129,7 @@ import { miLocalStorage } from '@/local-storage.js';
 import { claimAchievement } from '@/scripts/achievements.js';
 import { emojiPicker } from '@/scripts/emoji-picker.js';
 import { mfmFunctionPicker } from '@/scripts/mfm-function-picker.js';
+import { deviceKind } from '@/scripts/device-kind';
 
 const $i = signinRequired();
 
@@ -406,7 +407,7 @@ function addTag(tag: string) {
 }
 
 function focus() {
-	if (textareaEl.value) {
+	if (textareaEl.value && deviceKind === 'desktop') {
 		textareaEl.value.focus();
 		textareaEl.value.setSelectionRange(textareaEl.value.value.length, textareaEl.value.value.length);
 	}

@@ -241,18 +241,20 @@ const previewable = (file: Misskey.entities.DriveFile): boolean => {
 		&.n12_3 {
 			min-height: initial;
 			max-height: initial;
-			aspect-ratio: 2 / 3; // fallback
+			aspect-ratio: 2 / 3;  // fallback
 		}
 	}
 
 	&.n2 {
-		aspect-ratio: 16/9;
+		// aspect-ratio: 16/9;
+		aspect-ratio: auto;
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 1fr;
 	}
 
 	&.n3 {
-		aspect-ratio: 16/9;
+		// aspect-ratio: 16/9;
+		aspect-ratio: auto;
 		grid-template-columns: 1fr 0.5fr;
 		grid-template-rows: 1fr 1fr;
 
@@ -267,7 +269,9 @@ const previewable = (file: Misskey.entities.DriveFile): boolean => {
 	}
 
 	&.n4 {
-		aspect-ratio: 16/9;
+		// aspect-ratio: 16/9;
+		aspect-ratio: auto;
+
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 1fr 1fr;
 	}
@@ -276,7 +280,8 @@ const previewable = (file: Misskey.entities.DriveFile): boolean => {
 		grid-template-columns: 1fr 1fr;
 
 		> .media {
-			aspect-ratio: 16/9;
+			// aspect-ratio: 16/9;
+			aspect-ratio: auto;
 		}
 	}
 }
