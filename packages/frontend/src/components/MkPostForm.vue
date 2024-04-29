@@ -565,10 +565,10 @@ function onKeydown(ev: KeyboardEvent) {
 }
 
 function onInput(ev) {
-	textareaEl.height = 'auto';
+	textareaEl.value.style.height = 'auto';
   nextTick(()=>{
 		console.log(Math.min(500, ev.target.scrollHeight));
-		textareaEl.style.height = Math.min(500, textareaEl.scrollHeight) + "px";
+		textareaEl.value.style.height = Math.min(500, textareaEl.value.scrollHeight) + "px";
 	});
 }
 
