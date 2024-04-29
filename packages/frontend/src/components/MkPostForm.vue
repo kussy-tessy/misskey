@@ -560,11 +560,12 @@ function clear() {
 }
 
 function onKeydown(ev: KeyboardEvent) {
+	console.log('keydown is fired');
 	if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey) && canPost.value) post();
 	if (ev.key === 'Escape') emit('esc');
 }
 
-function onInput(ev){
+function onInput(ev) {
 	console.log('input! height size is trying to change');
 	console.log(Math.min(500, ev.target.scrollHeight));
 	ev.target.height = Math.min(500, ev.target.scrollHeight) + "px";
