@@ -565,6 +565,8 @@ function onKeydown(ev: KeyboardEvent) {
 }
 
 function onInput(ev){
+	console.log('input! height size is trying to change');
+	console.log(Math.min(500, ev.target.scrollHeight));
 	ev.target.height = Math.min(500, ev.target.scrollHeight) + "px";
 }
 
