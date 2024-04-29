@@ -564,10 +564,9 @@ function onKeydown(ev: KeyboardEvent) {
 	if (ev.key === 'Escape') emit('esc');
 }
 
-function onInput(ev) {
+function onInput(_ev) {
 	textareaEl.value.style.height = 'auto';
   nextTick(()=>{
-		console.log(Math.min(500, ev.target.scrollHeight));
 		textareaEl.value.style.height = Math.min(500, textareaEl.value.scrollHeight) + "px";
 	});
 }
