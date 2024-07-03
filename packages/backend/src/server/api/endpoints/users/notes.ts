@@ -5,7 +5,7 @@
 
 import { Brackets } from 'typeorm';
 import { Inject, Injectable } from '@nestjs/common';
-import type { NotesRepository } from '@/models/_.js';
+import type { NotesRepository, UsersRepository } from '@/models/_.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { NoteEntityService } from '@/core/entities/NoteEntityService.js';
 import { DI } from '@/di-symbols.js';
@@ -17,7 +17,7 @@ import { MiLocalUser } from '@/models/User.js';
 import { FanoutTimelineEndpointService } from '@/core/FanoutTimelineEndpointService.js';
 import { FanoutTimelineName } from '@/core/FanoutTimelineService.js';
 import { ApiError } from '@/server/api/error.js';
-import { KigurumiTimelineService } from '@/core/KigurumiTimelineService.js';
+import { UserEntityService } from '@/core/entities/UserEntityService.js';
 
 export const meta = {
 	tags: ['users', 'notes'],
@@ -78,8 +78,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private idService: IdService,
 		private fanoutTimelineEndpointService: FanoutTimelineEndpointService,
 		private metaService: MetaService,
-		private kigurumiTimelineService: KigurumiTimelineService,
-	) {
+		private usersRepository: UsersRepository,
+		private userEntityService: UserEntityService,
+		) {
 		super(meta, paramDef, async (ps, me) => {
 			const untilId = ps.untilId ?? (ps.untilDate ? this.idService.gen(ps.untilDate!) : null);
 			const sinceId = ps.sinceId ?? (ps.sinceDate ? this.idService.gen(ps.sinceDate!) : null);
@@ -96,21 +97,27 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					return [];
 				}
 			}
+			
+			// 着ぐるみ抽出
+			if (ps.kigurumi) {
+				const user = await this.usersRepository.findOneBy({ id: ps.userId });
+				const isLocalUser = this.userEntityService.isLocalUser(user);
 
-			if (!serverSettings.enableFanoutTimeline || (me && ps.kigurumi)) {
-				// ログイン済みユーザーかつ着ぐるみさんを抽出の場合も、DBに問い合わせる
-				const timeline = await this.getFromDb({
-					untilId,
-					sinceId,
-					limit: ps.limit,
-					userId: ps.userId,
-					withChannelNotes: ps.withChannelNotes,
-					withFiles: ps.withFiles,
-					withRenotes: ps.withRenotes,
-					kigurumi: ps.kigurumi
-				}, me);
+				// ログイン済みユーザーまたは非ログインユーザーがローカルユーザーを抽出の場合、DBに問い合わせる
+				if(me || (!me && isLocalUser)){
+					const timeline = await this.getFromDb({
+						untilId,
+						sinceId,
+						limit: ps.limit,
+						userId: ps.userId,
+						withChannelNotes: ps.withChannelNotes,
+						withFiles: ps.withFiles,
+						withRenotes: ps.withRenotes,
+						kigurumi: ps.kigurumi
+					}, me);
 
-				return await this.noteEntityService.packMany(timeline, me);
+					return await this.noteEntityService.packMany(timeline, me);
+				}
 			}
 
 			const redisTimelines: FanoutTimelineName[] = [ps.withFiles ? `userTimelineWithFiles:${ps.userId}` : `userTimeline:${ps.userId}`];
