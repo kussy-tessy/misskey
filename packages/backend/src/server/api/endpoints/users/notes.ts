@@ -78,6 +78,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private idService: IdService,
 		private fanoutTimelineEndpointService: FanoutTimelineEndpointService,
 		private metaService: MetaService,
+
+		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
 		private userEntityService: UserEntityService,
 		) {
