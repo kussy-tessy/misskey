@@ -4,18 +4,65 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-	<div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]"
-		:style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
-		<input ref="searchEl" :value="q" class="search" data-prevent-emoji-insert :class="{ filled: q != null && q != '' }"
-			:placeholder="i18n.ts.search" type="search" autocapitalize="off" @input="input()" @paste.stop="paste"
-			@keydown.stop.prevent.enter="onEnter">
-		<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
-		<div ref="emojisEl" class="emojis" tabindex="-1">
-			<section class="result">
-				<div v-if="searchResultCustom.length > 0" class="body">
-					<button v-for="emoji in searchResultCustom" :key="emoji.name" class="_button item"
-						:disabled="!canReact(emoji)" :title="emoji.name" tabindex="0" @click="chosen(emoji, $event)">
-						<MkCustomEmoji class="emoji" :name="emoji.name" :fallbackToImage="true" />
+<div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
+	<input
+		ref="searchEl"
+		:value="q"
+		class="search"
+		data-prevent-emoji-insert
+		:class="{ filled: q != null && q != '' }"
+		:placeholder="i18n.ts.search"
+		type="search"
+		autocapitalize="off"
+		@input="input()"
+		@paste.stop="paste"
+		@keydown="onKeydown"
+	>
+	<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
+	<div ref="emojisEl" class="emojis" tabindex="-1">
+		<section class="result">
+			<div v-if="searchResultCustom.length > 0" class="body">
+				<button
+					v-for="emoji in searchResultCustom"
+					:key="emoji.name"
+					class="_button item"
+					:disabled="!canReact(emoji)"
+					:title="emoji.name"
+					tabindex="0"
+					@click="chosen(emoji, $event)"
+				>
+					<MkCustomEmoji class="emoji" :name="emoji.name" :fallbackToImage="true"/>
+				</button>
+			</div>
+			<div v-if="searchResultUnicode.length > 0" class="body">
+				<button
+					v-for="emoji in searchResultUnicode"
+					:key="emoji.name"
+					class="_button item"
+					:title="emoji.name"
+					tabindex="0"
+					@click="chosen(emoji, $event)"
+				>
+					<MkEmoji class="emoji" :emoji="emoji.char"/>
+				</button>
+			</div>
+		</section>
+
+		<div v-if="tab === 'index'" class="group index">
+			<section v-if="showPinned && (pinned && pinned.length > 0)">
+				<div class="body">
+					<button
+						v-for="emoji in pinnedEmojisDef"
+						:key="getKey(emoji)"
+						:data-emoji="getKey(emoji)"
+						class="_button item"
+						:disabled="!canReact(emoji)"
+						tabindex="0"
+						@pointerenter="computeButtonTitle"
+						@click="chosen(emoji, $event)"
+					>
+						<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
+						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
 					</button>
 				</div>
 				<div v-if="searchResultUnicode.length > 0" class="body">
@@ -116,6 +163,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
 	(ev: 'chosen', v: string): void;
+	(ev: 'esc'): void;
 }>();
 
 const searchEl = shallowRef<HTMLInputElement>();
@@ -384,7 +432,9 @@ function chosen(emoji: any, ev?: MouseEvent) {
 		const rect = el.getBoundingClientRect();
 		const x = rect.left + (el.offsetWidth / 2);
 		const y = rect.top + (el.offsetHeight / 2);
-		os.popup(MkRippleEffect, { x, y }, {}, 'end');
+		const { dispose } = os.popup(MkRippleEffect, { x, y }, {
+			end: () => dispose(),
+		});
 	}
 
 	const key = getKey(emoji);
@@ -413,9 +463,18 @@ function paste(event: ClipboardEvent): void {
 	}
 }
 
-function onEnter(ev: KeyboardEvent) {
+function onKeydown(ev: KeyboardEvent) {
 	if (ev.isComposing || ev.key === 'Process' || ev.keyCode === 229) return;
-	done();
+	if (ev.key === 'Enter') {
+		ev.preventDefault();
+		ev.stopPropagation();
+		done();
+	}
+	if (ev.key === 'Escape') {
+		ev.preventDefault();
+		ev.stopPropagation();
+		emit('esc');
+	}
 }
 
 function done(query?: string): boolean | void {
@@ -681,11 +740,6 @@ defineExpose({
 					contain: strict;
 					border-radius: 4px;
 					font-size: 24px;
-
-					&:focus-visible {
-						outline: solid 2px var(--focus);
-						z-index: 1;
-					}
 
 					&:hover {
 						background: rgba(0, 0, 0, 0.05);
