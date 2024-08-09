@@ -123,6 +123,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					class="ti ti-hash ti-fw"></i></button>
 		</div>
 	</div>
+</div>
 </template>
 
 <script lang="ts" setup>
