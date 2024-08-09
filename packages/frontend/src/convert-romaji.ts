@@ -7,7 +7,7 @@ export function convertToRomaji(hiragana: string):string[]{
   // 二重母音はローマ字では後ろの母音にローマ字を当てないことがあるよね。
   // uu→u, ou→o, 
   const replaced = [hepburnRawResult, kunreiRawResult].map(result => result.replace(/uu/g, 'u').replace(/ou/g, 'o'));
-  const combinedResults = new Set([hepburnRawResult, kunreiRawResult, ...replaced]);
+  const combinedResults = new Set([hiragana, hepburnRawResult, kunreiRawResult, ...replaced]);
   return [...combinedResults];
 }
 

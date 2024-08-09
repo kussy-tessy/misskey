@@ -4,126 +4,114 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
-	<input
-		ref="searchEl"
-		:value="q"
-		class="search"
-		data-prevent-emoji-insert
-		:class="{ filled: q != null && q != '' }"
-		:placeholder="i18n.ts.search"
-		type="search"
-		autocapitalize="off"
-		@input="input()"
-		@paste.stop="paste"
-		@keydown="onKeydown"
-	>
-	<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
-	<div ref="emojisEl" class="emojis" tabindex="-1">
-		<section class="result">
-			<div v-if="searchResultCustom.length > 0" class="body">
-				<button
-					v-for="emoji in searchResultCustom"
-					:key="emoji.name"
-					class="_button item"
-					:disabled="!canReact(emoji)"
-					:title="emoji.name"
-					tabindex="0"
-					@click="chosen(emoji, $event)"
-				>
-					<MkCustomEmoji class="emoji" :name="emoji.name" :fallbackToImage="true"/>
-				</button>
-			</div>
-			<div v-if="searchResultUnicode.length > 0" class="body">
-				<button
-					v-for="emoji in searchResultUnicode"
-					:key="emoji.name"
-					class="_button item"
-					:title="emoji.name"
-					tabindex="0"
-					@click="chosen(emoji, $event)"
-				>
-					<MkEmoji class="emoji" :emoji="emoji.char"/>
-				</button>
-			</div>
-		</section>
-
-		<div v-if="tab === 'index'" class="group index">
-			<section v-if="showPinned && (pinned && pinned.length > 0)">
-				<div class="body">
+	<div class="omfetrab" :class="['s' + size, 'w' + width, 'h' + height, { asDrawer, asWindow }]" :style="{ maxHeight: maxHeight ? maxHeight + 'px' : undefined }">
+		<input
+			ref="searchEl"
+			:value="q"
+			class="search"
+			data-prevent-emoji-insert
+			:class="{ filled: q != null && q != '' }"
+			:placeholder="i18n.ts.search"
+			type="search"
+			autocapitalize="off"
+			@input="input()"
+			@paste.stop="paste"
+			@keydown="onKeydown"
+		>
+		<!-- FirefoxのTabフォーカスが想定外の挙動となるためtabindex="-1"を追加 https://github.com/misskey-dev/misskey/issues/10744 -->
+		<div ref="emojisEl" class="emojis" tabindex="-1">
+			<section class="result">
+				<div v-if="searchResultCustom.length > 0" class="body">
 					<button
-						v-for="emoji in pinnedEmojisDef"
-						:key="getKey(emoji)"
-						:data-emoji="getKey(emoji)"
+						v-for="emoji in searchResultCustom"
+						:key="emoji.name"
 						class="_button item"
 						:disabled="!canReact(emoji)"
+						:title="emoji.name"
 						tabindex="0"
-						@pointerenter="computeButtonTitle"
 						@click="chosen(emoji, $event)"
 					>
-						<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
-						<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
+						<MkCustomEmoji class="emoji" :name="emoji.name" :fallbackToImage="true"/>
 					</button>
 				</div>
 				<div v-if="searchResultUnicode.length > 0" class="body">
-					<button v-for="emoji in searchResultUnicode" :key="emoji.name" class="_button item" :title="emoji.name"
-						tabindex="0" @click="chosen(emoji, $event)">
-						<MkEmoji class="emoji" :emoji="emoji.char" />
+					<button
+						v-for="emoji in searchResultUnicode"
+						:key="emoji.name"
+						class="_button item"
+						:title="emoji.name"
+						tabindex="0"
+						@click="chosen(emoji, $event)"
+					>
+						<MkEmoji class="emoji" :emoji="emoji.char"/>
 					</button>
 				</div>
 			</section>
-
+	
 			<div v-if="tab === 'index'" class="group index">
 				<section v-if="showPinned && (pinned && pinned.length > 0)">
 					<div class="body">
-						<button v-for="emoji in pinnedEmojisDef" :key="getKey(emoji)" :data-emoji="getKey(emoji)"
-							class="_button item" :disabled="!canReact(emoji)" tabindex="0" @pointerenter="computeButtonTitle"
-							@click="chosen(emoji, $event)">
-							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true" />
-							<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true" />
+						<button
+							v-for="emoji in pinnedEmojisDef"
+							:key="getKey(emoji)"
+							:data-emoji="getKey(emoji)"
+							class="_button item"
+							:disabled="!canReact(emoji)"
+							tabindex="0"
+							@pointerenter="computeButtonTitle"
+							@click="chosen(emoji, $event)"
+						>
+							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
+							<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
 						</button>
 					</div>
 				</section>
-
+	
 				<section>
 					<header class="_acrylic"><i class="ti ti-clock ti-fw"></i> {{ i18n.ts.recentUsed }}</header>
 					<div class="body">
-						<button v-for="emoji in recentlyUsedEmojisDef" :key="getKey(emoji)" class="_button item"
-							:disabled="!canReact(emoji)" :data-emoji="getKey(emoji)" @pointerenter="computeButtonTitle"
-							@click="chosen(emoji, $event)">
-							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true" />
-							<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true" />
+						<button
+							v-for="emoji in recentlyUsedEmojisDef"
+							:key="getKey(emoji)"
+							class="_button item"
+							:disabled="!canReact(emoji)"
+							:data-emoji="getKey(emoji)"
+							@pointerenter="computeButtonTitle"
+							@click="chosen(emoji, $event)"
+						>
+							<MkCustomEmoji v-if="!emoji.hasOwnProperty('char')" class="emoji" :name="getKey(emoji)" :normal="true"/>
+							<MkEmoji v-else class="emoji" :emoji="getKey(emoji)" :normal="true"/>
 						</button>
 					</div>
 				</section>
 			</div>
 			<div v-once class="group">
 				<header class="_acrylic">{{ i18n.ts.customEmojis }}</header>
-				<XSection v-for="child in customEmojiFolderRoot.children" :key="`custom:${child.value}`" :initialShown="false"
+				<XSection
+					v-for="child in customEmojiFolderRoot.children"
+					:key="`custom:${child.value}`"
+					:initialShown="false"
 					:emojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).map(e => `:${e.name}:`))"
 					:disabledEmojis="computed(() => customEmojis.filter(e => filterCategory(e, child.value)).filter(e => !canReact(e)).map(e => `:${e.name}:`))"
-					:hasChildSection="child.children.length !== 0" :customEmojiTree="child.children" @chosen="chosen">
+					:hasChildSection="child.children.length !== 0"
+					:customEmojiTree="child.children"
+					@chosen="chosen"
+				>
 					{{ child.value || i18n.ts.other }}
 				</XSection>
 			</div>
 			<div v-once class="group">
 				<header class="_acrylic">{{ i18n.ts.emoji }}</header>
-				<XSection v-for="category in categories" :key="category" :emojis="emojiCharByCategory.get(category) ?? []"
-					:hasChildSection="false" @chosen="chosen">{{ category }}</XSection>
+				<XSection v-for="category in categories" :key="category" :emojis="emojiCharByCategory.get(category) ?? []" :hasChildSection="false" @chosen="chosen">{{ category }}</XSection>
 			</div>
 		</div>
 		<div class="tabs">
-			<button class="_button tab" :class="{ active: tab === 'index' }" @click="tab = 'index'"><i
-					class="ti ti-asterisk ti-fw"></i></button>
-			<button class="_button tab" :class="{ active: tab === 'custom' }" @click="tab = 'custom'"><i
-					class="ti ti-mood-happy ti-fw"></i></button>
-			<button class="_button tab" :class="{ active: tab === 'unicode' }" @click="tab = 'unicode'"><i
-					class="ti ti-leaf ti-fw"></i></button>
-			<button class="_button tab" :class="{ active: tab === 'tags' }" @click="tab = 'tags'"><i
-					class="ti ti-hash ti-fw"></i></button>
+			<button class="_button tab" :class="{ active: tab === 'index' }" @click="tab = 'index'"><i class="ti ti-asterisk ti-fw"></i></button>
+			<button class="_button tab" :class="{ active: tab === 'custom' }" @click="tab = 'custom'"><i class="ti ti-mood-happy ti-fw"></i></button>
+			<button class="_button tab" :class="{ active: tab === 'unicode' }" @click="tab = 'unicode'"><i class="ti ti-leaf ti-fw"></i></button>
+			<button class="_button tab" :class="{ active: tab === 'tags' }" @click="tab = 'tags'"><i class="ti ti-hash ti-fw"></i></button>
 		</div>
 	</div>
-</div>
 </template>
 
 <script lang="ts" setup>
