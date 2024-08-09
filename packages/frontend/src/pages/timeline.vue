@@ -27,6 +27,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						@queue="queueUpdated"
 					/>
 				</div>
+			</div>
 			</MkHorizontalSwipe>
 		</MkSpacer>
 	</MkStickyContainer>
