@@ -57,7 +57,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     const hasNoAvatar = packedUser.avatarUrl?.includes('identicon');
 
     // 名前とIDが一致
-    const hasTekitoName = packedUser.name === packedUser.username;
+    const hasTekitoName = packedUser.name === packedUser.username || packedUser.name == null;
 
     // 自己紹介がない
     const hasNoDescription = packedUser.description?.length === 0 ?? false;
