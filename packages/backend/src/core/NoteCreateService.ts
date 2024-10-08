@@ -371,7 +371,7 @@ export class NoteCreateService implements OnApplicationShutdown {
 		}
 
 		// SPAMチェック
-		if (await this.spamDefendService.isSpamlike(user, { type: 'create', mentionedUsersCount: mentionedUsers.length })) {
+		if (await this.spamDefendService.isSpamlike(user, { type: 'create', mentionedUsersCount: mentionedUsers.length, text: data.text })) {
 			throw new Error(`SPAMフィルターに反応`)
 		}
 

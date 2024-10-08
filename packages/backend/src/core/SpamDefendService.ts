@@ -9,7 +9,7 @@ import Logger from '@/logger.js';
 import { LoggerService } from '@/core/LoggerService.js';
 
 export type InspectActivityArg =
-  { type: 'create', mentionedUsersCount: number } |
+  { type: 'create', mentionedUsersCount: number, text: string|null } |
   { type: 'like', targetNote: MiNote }
 
 @Injectable()
@@ -63,13 +63,11 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     const hasTekitoName = packedUser.name === packedUser.username || packedUser.name == null;
 
     // 自己紹介がない
-    const hasNoDescription = (packedUser.description?.length === 0) ?? true;
-
-    this.logger.info(`[Debugging] hasNoDescription: ${hasNoDescription}, description: ${packedUser.description}`);
+    const hasNoDescription = packedUser.description == null || packedUser.description.length === 0;
 
     if (isRecentlyFirstObserved) score += 5;
     if (hasNoAvatar) score += 15;
-    if (hasTekitoName) score += 15;
+    if (hasTekitoName) score += 10;
     if (hasNoDescription) score += 10;
 
     this.logger.info(`[UserScore] name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, score: ${score}`);
@@ -108,7 +106,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (isFisrtObservationAfterSpamFestival) score += 5;
     if (hasNoJapaneseDescription) score += 20;
 
-    this.logger.info(`[InstranceScore] instance: ${instance.host}, score: ${score}`);
+    this.logger.info(`[InstanceScore] instance: ${instance.host}, score: ${score}`);
 
     return score;
   }
@@ -130,8 +128,6 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
         // メンションが3つ以上
         score += 20;
       }
-
-      return score;
     }
 
     if (arg.type === 'like') {
@@ -139,10 +135,10 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
         // リノートが5以下のノートへのリアクション
         score += 5
       }
-
-      return score;
     }
 
-    return 0;
+    this.logger.info(`[ActivityScore] arg: ${arg}, score: ${score}`);
+
+    return score;
   }
 }
