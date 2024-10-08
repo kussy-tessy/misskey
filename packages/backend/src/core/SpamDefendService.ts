@@ -48,7 +48,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (!user.host) return {score: 0};
 
     let score = 0
-    const packedUser = await this.userEntityService.pack(user.id, null, { schema: 'UserDetailed' })
+    const packedUser = await this.userEntityService.pack(user.id, null, { schema: 'UserDetailed' });
 
     // フォロワーのいるリモートユーザーOK
     if (packedUser.followersCount > 0) return {score: 0};
@@ -63,12 +63,14 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     const hasTekitoName = packedUser.name === packedUser.username || packedUser.name == null;
 
     // 自己紹介がない
-    const hasNoDescription = packedUser.description?.length === 0 ?? true;
+    const hasNoDescription = (packedUser.description?.length === 0) ?? true;
 
-    if (isRecentlyFirstObserved) score += 5
-    if (hasNoAvatar) score += 15
-    if (hasTekitoName) score += 15
-    if (hasNoDescription) score += 10
+    this.logger.info(`[Debugging] hasNoDescription: ${hasNoDescription}, description: ${packedUser.description}`);
+
+    if (isRecentlyFirstObserved) score += 5;
+    if (hasNoAvatar) score += 15;
+    if (hasTekitoName) score += 15;
+    if (hasNoDescription) score += 10;
 
     this.logger.info(`[UserScore] name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, score: ${score}`);
 
