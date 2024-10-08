@@ -30,25 +30,28 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
   @bindThis
   public async isSpamlike(user: { id: MiUser['id'], host: MiUser['host'] }, activity: InspectActivityArg) {
     const userScore = await this.calcSuspiciousUserScore(user);
-    if (userScore === 0) return false;
+    if (userScore.score === 0) return false;
 
     const instanceScore = await this.calcSuspiciousInstanceScore(user.host);
     const activityScore = await this.calcSuspiciousActivity(activity);
 
-    const score = userScore + instanceScore + activityScore;
+    const score = userScore.score + instanceScore + activityScore;
+    this.logger.info(`[SumScore] name: ${userScore.name}, username: ${userScore.username}, host: ${user.host}, score: ${score}`)
     return score > this.threshold;
   }
 
   @bindThis
-  private async calcSuspiciousUserScore(user: { id: MiUser['id'], host: MiUser['host'] }): Promise<number> {
+  private async calcSuspiciousUserScore(user: { id: MiUser['id'], host: MiUser['host'] }): Promise<{
+    name?: string|null, username?: string, score: number
+  }> {
     // ローカルユーザーOK
-    if (!user.host) return 0;
+    if (!user.host) return {score: 0};
 
     let score = 0
     const packedUser = await this.userEntityService.pack(user.id, null, { schema: 'UserDetailed' })
 
     // フォロワーのいるリモートユーザーOK
-    if (packedUser.followersCount > 0) return 0;
+    if (packedUser.followersCount > 0) return {score: 0};
 
     // 初観測が2日以内
     const isRecentlyFirstObserved = Date.now() - new Date(packedUser.createdAt).getTime() < this.recentTime;
@@ -64,12 +67,12 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
 
     if (isRecentlyFirstObserved) score += 5
     if (hasNoAvatar) score += 15
-    if (hasTekitoName) score += 10
+    if (hasTekitoName) score += 15
     if (hasNoDescription) score += 10
 
-    this.logger.info(`name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, score: ${score}`);
+    this.logger.info(`[UserScore] name: ${packedUser.name}, user: ${packedUser.username}, host: ${packedUser.host}, score: ${score}`);
 
-    return score
+    return {name: packedUser.name, username: packedUser.username, score: score};
   }
 
   @bindThis
@@ -103,7 +106,7 @@ export class SpamDefendService implements OnApplicationShutdown, OnModuleInit {
     if (isFisrtObservationAfterSpamFestival) score += 5;
     if (hasNoJapaneseDescription) score += 20;
 
-    this.logger.info(`instance: ${instance.host}, score: ${score}`);
+    this.logger.info(`[InstranceScore] instance: ${instance.host}, score: ${score}`);
 
     return score;
   }
