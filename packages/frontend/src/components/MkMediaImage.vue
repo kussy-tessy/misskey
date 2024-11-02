@@ -20,17 +20,19 @@ SPDX-License-Identifier: AGPL-3.0-only
 				:forceBlurhash="hide" :cover="hide || cover" :blurCarefully="blurCarefully" :alt="image.comment || image.name"
 				:title="image.comment || image.name" :width="image.properties.width" :height="image.properties.height"
 				:style="hide ? 'filter: brightness(0.7);' : null" @unlockBlur="blurCarefully = false"/>
-		</component>
-		<template v-if="hide">
-			<div :class="$style.hiddenText">
-				<div :class="$style.hiddenTextWrapper">
-					<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive
-						}}{{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})`
-			: '' }}</b>
-					<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ defaultStore.state.dataSaver.media &&
-			image.size ? bytes(image.size) : i18n.ts.image }}</b>
-					<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
-				</div>
+	</component>
+	<template v-if="hide">
+		<div :class="$style.hiddenText">
+			<div :class="$style.hiddenTextWrapper">
+				<b v-if="image.isSensitive" style="display: block;">
+					<i class="ti ti-eye-exclamation"></i>
+					{{ i18n.ts.sensitive }} {{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}
+				</b>
+				<b v-else style="display: block;">
+					<i class="ti ti-photo"></i>
+					{{ defaultStore.state.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}
+				</b>
+				<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
 			</div>
 		</div>
 	</template>
