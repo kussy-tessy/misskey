@@ -45,7 +45,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkAvatar :class="$style.collapsedRenoteTargetAvatar" :user="appearNote.user" link preview/>
 		<Mfm :text="getNoteSummary(appearNote)" :plain="true" :nowrap="true" :author="appearNote.user" :nyaize="'respect'" :class="$style.collapsedRenoteTargetText" @click="renoteCollapsed = false"/>
 	</div>
-	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu">
+	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu"> <!-- KUSSY: ここに@clickを追加する！ -->
 		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="appearNote.user" :link="!mock" :preview="!mock"/>
 		<div :class="$style.main">
