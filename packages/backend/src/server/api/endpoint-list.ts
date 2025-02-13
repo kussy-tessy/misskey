@@ -305,7 +305,7 @@ export * as 'notes/favorites/delete' from './endpoints/notes/favorites/delete.js
 export * as 'notes/featured' from './endpoints/notes/featured.js';
 export * as 'notes/global-timeline' from './endpoints/notes/global-timeline.js';
 export * as 'notes/hybrid-timeline' from './endpoints/notes/hybrid-timeline.js';
-export * as 'notes/kigurmi-timeline' from './endpoints/notes/kigurumi-timeline.js'
+export * as 'notes/kigurumi-timeline' from './endpoints/notes/kigurumi-timeline.js'
 export * as 'notes/local-timeline' from './endpoints/notes/local-timeline.js';
 export * as 'notes/mentions' from './endpoints/notes/mentions.js';
 export * as 'notes/polls/recommendation' from './endpoints/notes/polls/recommendation.js';
