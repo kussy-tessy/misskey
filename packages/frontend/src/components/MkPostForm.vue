@@ -131,7 +131,6 @@ import { claimAchievement } from '@/scripts/achievements.js';
 import { emojiPicker } from '@/scripts/emoji-picker.js';
 import { mfmFunctionPicker } from '@/scripts/mfm-function-picker.js';
 import { deviceKind } from '@/scripts/device-kind';
-import type { PostFormProps } from '@/types/post-form.js';
 
 const $i = signinRequired();
 
