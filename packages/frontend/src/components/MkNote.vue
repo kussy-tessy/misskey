@@ -45,7 +45,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkAvatar :class="$style.collapsedRenoteTargetAvatar" :user="appearNote.user" link preview/>
 		<Mfm :text="getNoteSummary(appearNote)" :plain="true" :nowrap="true" :author="appearNote.user" :nyaize="'respect'" :class="$style.collapsedRenoteTargetText" @click="renoteCollapsed = false"/>
 	</div>
-	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu"> <!-- KUSSY: ここに@clickを追加する！ -->
+	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu" @click="toNotePage(appearNote.id, $event)">
 		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="appearNote.user" :link="!mock" :preview="!mock"/>
 		<div :class="$style.main">
@@ -220,6 +220,7 @@ import { isEnabledUrlPreview } from '@/instance.js';
 import { type Keymap } from '@/scripts/hotkey.js';
 import { focusPrev, focusNext } from '@/scripts/focus.js';
 import { getAppearNote } from '@/scripts/get-appear-note.js';
+import { useRouter } from '@/router/supplier.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -638,6 +639,11 @@ function emitUpdReaction(emoji: string, delta: number) {
 	} else if (delta > 0) {
 		emit('reaction', emoji);
 	}
+}
+
+const router = useRouter();
+function toNotePage(id: string, e: MouseEvent){
+	router.push(notePage(id));
 }
 </script>
 
