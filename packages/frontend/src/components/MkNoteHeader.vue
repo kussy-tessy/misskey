@@ -48,7 +48,13 @@ const props = defineProps<{
 
 const mock = inject<boolean>('mock', false);
 
-const href = computed(() => props.note.url ?? props.note.uri)
+const href = computed(() => {
+	if (props.note.user.instance) {
+	  props.note.url ?? props.note.uri;
+	} else {
+    `/notes/${props.note.id}`;
+	}
+})
 </script>
 
 <style lang="scss" module>

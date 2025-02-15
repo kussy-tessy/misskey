@@ -643,7 +643,9 @@ function emitUpdReaction(emoji: string, delta: number) {
 
 const router = useRouter();
 function toNotePage(id: string, e: MouseEvent){
-	router.push(notePage(id));
+	if(e.target === e.currentTarget){
+	  router.push(`notes/${id}`);
+	}
 }
 </script>
 
