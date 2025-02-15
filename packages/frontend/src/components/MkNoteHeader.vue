@@ -50,9 +50,9 @@ const mock = inject<boolean>('mock', false);
 
 const href = computed(() => {
 	if (props.note.user.instance) {
-	  props.note.url ?? props.note.uri;
+	  return props.note.url ?? props.note.uri;
 	} else {
-    `/notes/${props.note.id}`;
+    return `/notes/${props.note.id}`;
 	}
 })
 </script>

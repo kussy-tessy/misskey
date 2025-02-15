@@ -643,7 +643,9 @@ function emitUpdReaction(emoji: string, delta: number) {
 
 const router = useRouter();
 function toNotePage(id: string, e: MouseEvent){
-	if(e.target === e.currentTarget){
+	const ignoreSelector = "a, button";
+	const isIgnored = e.tarrget.closest(ignoreSelector);
+	if (!isIgnored){
 	  router.push(`notes/${id}`);
 	}
 }
