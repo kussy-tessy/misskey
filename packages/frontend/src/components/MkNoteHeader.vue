@@ -20,9 +20,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="mock">
 			<MkTime :time="note.createdAt" colored/>
 		</div>
-		<a v-else :href="href" rel="nofollow noopener" :target="target">
-			<MkTime :time="note.createdAt" colored/>
-		</a>
+		<div v-else>
+			<a v-if="isRemote" :href="href" rel="nofollow noopener" target="_blank">
+				<MkTime :time="note.createdAt" colored/>
+			</a>
+			<MkA v-else :to="notePage(note)">
+				<MkTime :time="note.createdAt" colored/>
+			</MkA>
+		</div>
 		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
 			<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 			<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
@@ -48,16 +53,14 @@ const props = defineProps<{
 
 const mock = inject<boolean>('mock', false);
 
+const isRemote = !!props.note.user.instance
 const href = computed(() => {
-	if (props.note.user.instance) {
+	if (isRemote) {
 		return props.note.url ?? props.note.uri;
 	} else {
 		return `/notes/${props.note.id}`;
 	}
 })
-const target = computed(()=> 
-	props.note.user.instance ? '_blank' : '_self'
-)
 </script>
 
 <style lang="scss" module>
