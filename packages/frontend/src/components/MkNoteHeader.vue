@@ -20,14 +20,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="mock">
 			<MkTime :time="note.createdAt" colored/>
 		</div>
-		<div v-else>
+		<span v-else>
 			<a v-if="isRemote" :href="href" rel="nofollow noopener" target="_blank">
 				<MkTime :time="note.createdAt" colored/>
 			</a>
 			<MkA v-else :to="notePage(note)">
 				<MkTime :time="note.createdAt" colored/>
 			</MkA>
-		</div>
+		</span>
 		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
 			<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 			<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
