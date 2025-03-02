@@ -56,7 +56,7 @@ function toNotePage(id: string, e: MouseEvent){
 	const ignoreSelector = "a, button, video";
 	const isIgnored = (e.target as Element).closest(ignoreSelector);
 	if (!isIgnored){
-		router.push(`notes/${id}`);
+		router.push(`/notes/${id}`);
 	}
 }
 </script>
