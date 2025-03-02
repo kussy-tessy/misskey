@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="$style.root" @pointerdown="onPointerDown" @pointerup="onPointerUp(note.id, $event)">
+<div :class="$style.root" @pointerdown="onPointerDown" @pointerup.prevent="onPointerUp(note.id, $event)">
 	<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
 	<div :class="$style.main">
 		<MkNoteHeader :class="$style.header" :note="note" :mini="true"/>
