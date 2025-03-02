@@ -20,7 +20,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div v-if="mock">
 			<MkTime :time="note.createdAt" colored/>
 		</div>
-		<a v-else :href="href" rel="nofollow noopener" target="_blank">
+		<a v-else :href="href" rel="nofollow noopener" :target="target">
 			<MkTime :time="note.createdAt" colored/>
 		</a>
 		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
@@ -50,11 +50,14 @@ const mock = inject<boolean>('mock', false);
 
 const href = computed(() => {
 	if (props.note.user.instance) {
-	  return props.note.url ?? props.note.uri;
+		return props.note.url ?? props.note.uri;
 	} else {
-    return `/notes/${props.note.id}`;
+		return `/notes/${props.note.id}`;
 	}
 })
+const target = computed(()=> 
+	props.note.user.instance ? '_blank' : '_self'
+)
 </script>
 
 <style lang="scss" module>
