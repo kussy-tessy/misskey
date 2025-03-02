@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div v-if="!muted" :class="[$style.root, { [$style.children]: depth > 1 }]">
+<div v-if="!muted" @pointerdown="onPointerDown" @pointerup="onPointerUp(note.id, $event)" :class="[$style.root, { [$style.children]: depth > 1 }]">
 	<div :class="$style.main">
 		<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
@@ -51,6 +51,7 @@ import { i18n } from '@/i18n.js';
 import { $i } from '@/account.js';
 import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/scripts/check-word-mute.js';
+import { useRouter } from '@/router/supplier.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -74,6 +75,31 @@ if (props.detail) {
 	}).then(res => {
 		replies.value = res;
 	});
+}
+
+const startX = ref(0);
+const startY = ref(0);
+const dragThreshold = 5;
+
+const onPointerDown = (event: PointerEvent) => {
+  startX.value = event.clientX;
+  startY.value = event.clientY;
+};
+const onPointerUp = (id: string, event: PointerEvent) => {
+  const diffX = Math.abs(event.clientX - startX.value);
+  const diffY = Math.abs(event.clientY - startY.value);
+  if (diffX < dragThreshold && diffY < dragThreshold) {
+    toNotePage(id, event);
+  }
+};
+
+const router = useRouter();
+function toNotePage(id: string, e: MouseEvent){
+	const ignoreSelector = "a, button, video";
+	const isIgnored = (e.target as Element).closest(ignoreSelector);
+	if (!isIgnored){
+		router.push(`notes/${id}`);
+	}
 }
 </script>
 

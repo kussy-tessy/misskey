@@ -45,7 +45,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkAvatar :class="$style.collapsedRenoteTargetAvatar" :user="appearNote.user" link preview/>
 		<Mfm :text="getNoteSummary(appearNote)" :plain="true" :nowrap="true" :author="appearNote.user" :nyaize="'respect'" :class="$style.collapsedRenoteTargetText" @click="renoteCollapsed = false"/>
 	</div>
-	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu" @click="toNotePage(appearNote.id, $event)">
+	<article v-else :class="$style.article" @contextmenu.stop="onContextmenu" @pointerdown="onPointerDown" @pointerup="onPointerUp(appearNote.id, $event)">
 		<div v-if="appearNote.channel" :class="$style.colorBar" :style="{ background: appearNote.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="appearNote.user" :link="!mock" :preview="!mock"/>
 		<div :class="$style.main">
@@ -641,12 +641,28 @@ function emitUpdReaction(emoji: string, delta: number) {
 	}
 }
 
+const startX = ref(0);
+const startY = ref(0);
+const dragThreshold = 5;
+
+const onPointerDown = (event: PointerEvent) => {
+  startX.value = event.clientX;
+  startY.value = event.clientY;
+};
+const onPointerUp = (id: string, event: PointerEvent) => {
+  const diffX = Math.abs(event.clientX - startX.value);
+  const diffY = Math.abs(event.clientY - startY.value);
+  if (diffX < dragThreshold && diffY < dragThreshold) {
+    toNotePage(id, event);
+  }
+};
+
 const router = useRouter();
 function toNotePage(id: string, e: MouseEvent){
-	const ignoreSelector = "a, button";
-	const isIgnored = e.target.closest(ignoreSelector);
+	const ignoreSelector = "a, button, video";
+	const isIgnored = (e.target as Element).closest(ignoreSelector);
 	if (!isIgnored){
-	  router.push(`notes/${id}`);
+		router.push(`notes/${id}`);
 	}
 }
 </script>
