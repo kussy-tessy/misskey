@@ -660,6 +660,7 @@ const onPointerUp = (id: string, event: PointerEvent) => {
 const router = useRouter();
 function toNotePage(id: string, e: MouseEvent){
 	const ignoreSelector = "a, button, video, input, .image";
+	console.log('着ぐるみすきーdebug', e.target)
 	const isIgnored = (e.target as Element).closest(ignoreSelector);
 	if (!isIgnored){
 		router.push(`/notes/${id}`);
