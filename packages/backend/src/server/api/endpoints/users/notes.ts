@@ -198,7 +198,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			query.andWhere('note.channelId IS NULL');
 		}
 
-		this.queryService.generateVisibilityQuery(query, me);
 		if (me) {
 			this.queryService.generateMutedUserQuery(query, me, { id: ps.userId });
 			this.queryService.generateBlockedUserQuery(query, me);
