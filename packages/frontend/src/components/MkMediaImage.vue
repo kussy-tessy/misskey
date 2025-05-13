@@ -110,6 +110,11 @@ async function onclick(ev: MouseEvent) {
 watch(() => props.image, () => {
 	hide.value = (prefer.s.nsfw === 'force' || prefer.s.dataSaver.media) ? true : (props.image.isSensitive && prefer.s.nsfw !== 'ignore');
 	blurCarefully.value = hide.value;
+	console.log({
+		prefer: prefer.s,
+		hide: hide.value,
+		blurCarefully: blurCarefully.value
+	})
 }, {
 	deep: true,
 	immediate: true,
