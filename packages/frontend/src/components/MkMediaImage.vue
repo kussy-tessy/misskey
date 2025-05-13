@@ -21,6 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			:hash="image.blurhash"
 			:src="(prefer.s.dataSaver.media && hide) ? null : url"
 			:forceBlurhash="hide"
+			:blurCarefully="blurCarefully"
 			:cover="hide || cover"
 			:alt="image.comment || image.name"
 			:title="image.comment || image.name"
