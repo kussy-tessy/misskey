@@ -78,7 +78,6 @@ const props = withDefaults(defineProps<{
 
 const hide = ref(true);
 const blurCarefully = ref(true);
-const darkMode = ref<boolean>(defaultStore.state.darkMode);
 
 const url = computed(() => (props.raw || prefer.s.loadRawImages)
 	? props.image.url

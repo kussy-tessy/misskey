@@ -641,7 +641,7 @@ export function getRenoteMenu(props: {
 		// 本当はこの処理をここに書きたくないけど、actionの関数の中に入れられてしまっているため、遅延評価になってしまう。
 		// ので関数の外で評価して備える。
 		const addingVisibility = (() => {
-			const configuredVisibility = defaultStore.state.rememberNoteVisibility ? defaultStore.state.visibility : defaultStore.state.defaultNoteVisibility;
+			const configuredVisibility = prefer.s.rememberNoteVisibility ? prefer.s.visibility : prefer.s.defaultNoteVisibility;
 
 			let visibility = appearNote.visibility;
 			visibility = smallerVisibility(visibility, configuredVisibility);
@@ -661,7 +661,7 @@ export function getRenoteMenu(props: {
 				os.popup(MkRippleEffect, { x, y }, {}, 'end');
 			}
 
-			const localOnly = defaultStore.state.rememberNoteVisibility ? defaultStore.state.localOnly : defaultStore.state.defaultNoteLocalOnly;
+			const localOnly = prefer.s.rememberNoteVisibility ? prefer.s.localOnly : prefer.s.defaultNoteLocalOnly;
 
 			if (!props.mock) {
 				misskeyApi('notes/create', {
