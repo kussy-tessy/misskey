@@ -51,7 +51,7 @@ import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/utility/check-word-mute.js';
-import { useRouter } from '@/router/supplier.js';
+import { useRouter } from '@/router.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
