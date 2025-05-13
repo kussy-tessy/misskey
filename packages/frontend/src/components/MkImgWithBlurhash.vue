@@ -43,7 +43,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			style="-webkit-user-drag: none;"
 			@click="onClick"
 		/>
-		<div style="display: none;">{{ props.blurCarefully }}</div>
 	</TransitionGroup>
 </div>
 </template>
