@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div :class="[hide ? $style.hidden : $style.visible, (image.isSensitive && defaultStore.state.highlightSensitiveMedia) && $style.sensitive]" @click="onclick">
+<div :class="[hide ? $style.hidden : $style.visible, (image.isSensitive && prefer.s.highlightSensitiveMedia) && $style.sensitive]" @click="onclick">
 	<component
 		:is="disableImageLink ? 'div' : 'a'"
 		v-bind="disableImageLink ? {
@@ -15,23 +15,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 			class: $style.imageContainer,
 			href: image.url,
 			style: 'cursor: zoom-in;'
-		}">
-			<ImgWithBlurhash :hash="image.blurhash" :src="(defaultStore.state.dataSaver.media && hide) ? null : url"
-				:forceBlurhash="hide" :cover="hide || cover" :blurCarefully="blurCarefully" :alt="image.comment || image.name"
-				:title="image.comment || image.name" :width="image.properties.width" :height="image.properties.height"
-				:style="hide ? 'filter: brightness(0.7);' : null" @unlockBlur="blurCarefully = false"/>
+		}"
+	>
+		<ImgWithBlurhash
+			:hash="image.blurhash"
+			:src="(prefer.s.dataSaver.media && hide) ? null : url"
+			:forceBlurhash="hide"
+			:cover="hide || cover"
+			:alt="image.comment || image.name"
+			:title="image.comment || image.name"
+			:width="image.properties.width"
+			:height="image.properties.height"
+			:style="hide ? 'filter: brightness(0.7);' : null"
+			@unlockBlur="blurCarefully = false"
+		/>
 	</component>
 	<template v-if="hide">
 		<div :class="$style.hiddenText">
 			<div :class="$style.hiddenTextWrapper">
-				<b v-if="image.isSensitive" style="display: block;">
-					<i class="ti ti-eye-exclamation"></i>
-					{{ i18n.ts.sensitive }} {{ defaultStore.state.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}
-				</b>
-				<b v-else style="display: block;">
-					<i class="ti ti-photo"></i>
-					{{ defaultStore.state.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}
-				</b>
+				<b v-if="image.isSensitive" style="display: block;"><i class="ti ti-eye-exclamation"></i> {{ i18n.ts.sensitive }}{{ prefer.s.dataSaver.media ? ` (${i18n.ts.image}${image.size ? ' ' + bytes(image.size) : ''})` : '' }}</b>
+				<b v-else style="display: block;"><i class="ti ti-photo"></i> {{ prefer.s.dataSaver.media && image.size ? bytes(image.size) : i18n.ts.image }}</b>
 				<span v-if="controls" style="display: block;">{{ i18n.ts.clickToShow }}</span>
 			</div>
 		</div>
@@ -52,14 +55,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { watch, ref, computed } from 'vue';
 import * as Misskey from 'misskey-js';
 import type { MenuItem } from '@/types/menu.js';
-import { copyToClipboard } from '@/scripts/copy-to-clipboard';
-import { getStaticImageUrl } from '@/scripts/media-proxy.js';
+import { copyToClipboard } from '@/utility/copy-to-clipboard';
+import { getStaticImageUrl } from '@/utility/media-proxy.js';
 import bytes from '@/filters/bytes.js';
 import ImgWithBlurhash from '@/components/MkImgWithBlurhash.vue';
-import { defaultStore } from '@/store.js';
 import { i18n } from '@/i18n.js';
 import * as os from '@/os.js';
-import { $i, iAmModerator } from '@/account.js';
+import { $i, iAmModerator } from '@/i.js';
+import { prefer } from '@/preferences.js';
 
 const props = withDefaults(defineProps<{
 	image: Misskey.entities.DriveFile;
@@ -77,9 +80,9 @@ const hide = ref(true);
 const blurCarefully = ref(true);
 const darkMode = ref<boolean>(defaultStore.state.darkMode);
 
-const url = computed(() => (props.raw || defaultStore.state.loadRawImages)
+const url = computed(() => (props.raw || prefer.s.loadRawImages)
 	? props.image.url
-	: defaultStore.state.disableShowingAnimatedImages
+	: prefer.s.disableShowingAnimatedImages
 		? getStaticImageUrl(props.image.url)
 		: props.image.thumbnailUrl,
 );
@@ -91,7 +94,7 @@ async function onclick(ev: MouseEvent) {
 
 	if (hide.value) {
 		ev.stopPropagation();
-		if (props.image.isSensitive && defaultStore.state.confirmWhenRevealingSensitiveMedia) {
+		if (props.image.isSensitive && prefer.s.confirmWhenRevealingSensitiveMedia) {
 			const { canceled } = await os.confirm({
 				type: 'question',
 				text: i18n.ts.sensitiveMediaRevealConfirm,
@@ -106,7 +109,7 @@ async function onclick(ev: MouseEvent) {
 
 // Plugin:register_note_view_interruptor を使って書き換えられる可能性があるためwatchする
 watch(() => props.image, () => {
-	hide.value = (defaultStore.state.nsfw === 'force' || defaultStore.state.dataSaver.media) ? true : (props.image.isSensitive && defaultStore.state.nsfw !== 'ignore');
+	hide.value = (prefer.s.nsfw === 'force' || prefer.s.dataSaver.media) ? true : (props.image.isSensitive && prefer.s.nsfw !== 'ignore');
 	blurCarefully.value = hide.value;
 }, {
 	deep: true,
@@ -168,9 +171,9 @@ function showMenu(ev: MouseEvent) {
 		menuItems.push({ type: 'divider' }, ...details);
 	}
 
-	if (defaultStore.state.devMode) {
+	if (prefer.s.devMode) {
 		menuItems.push({ type: 'divider' }, {
-			icon: 'ti ti-id',
+			icon: 'ti ti-hash',
 			text: i18n.ts.copyFileId,
 			action: () => {
 				copyToClipboard(props.image.id);
@@ -222,7 +225,7 @@ function showMenu(ev: MouseEvent) {
 	position: absolute;
 	border-radius: 6px;
 	background-color: var(--MI_THEME-fg);
-	color: var(--MI_THEME-accentLighten);
+	color: hsl(from var(--MI_THEME-accent) h s calc(l + 10));
 	font-size: 12px;
 	opacity: .5;
 	padding: 5px 8px;
@@ -296,7 +299,7 @@ html[data-color-scheme=light] .visible {
 	/* Hardcode to black because either --MI_THEME-bg or --MI_THEME-fg makes it hard to read in dark/light mode */
 	background-color: black;
 	border-radius: 6px;
-	color: var(--MI_THEME-accentLighten);
+	color: hsl(from var(--MI_THEME-accent) h s calc(l + 10));
 	display: inline-block;
 	font-weight: bold;
 	font-size: 0.8em;
