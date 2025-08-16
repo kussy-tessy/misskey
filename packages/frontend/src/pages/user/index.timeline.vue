@@ -8,20 +8,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<template #header>
 		<MkTab v-model="tab" :class="$style.tab">
 			<option value="featured">{{ i18n.ts.featured }}</option>
-			<option :value="null">{{ i18n.ts.notes }}</option>
+			<option value="notes">{{ i18n.ts.notes }}</option>
 			<option value="all">{{ i18n.ts.all }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
 			<option :invisible="!showKigurumi" value="kigurumi">着ぐるみさん</option>
 		</MkTab>
 	</template>
-	<MkNotes :noGap="true" :pagination="pagination" :class="$style.tl"/>
+	<MkNotesTimeline :key="tab" :noGap="true" :pagination="pagination" :pullToRefresh="false" :class="$style.tl"/>
 </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import * as Misskey from 'misskey-js';
-import MkNotes from '@/components/MkNotes.vue';
+import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import MkTab from '@/components/MkTab.vue';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
@@ -30,7 +30,7 @@ const props = defineProps<{
 	user: Misskey.entities.UserDetailed;
 }>();
 
-const tab = ref<string | null>('all');
+const tab = ref<string>('all');
 
 const showKigurumi = computed(()=>{
 	const isLoggedin = $i != null;
