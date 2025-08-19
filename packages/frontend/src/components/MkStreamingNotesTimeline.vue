@@ -326,6 +326,9 @@ function updatePaginationQuery() {
 		query = {
 			roleId: props.role,
 		};
+	} else if(props.src === 'kigurumi') {
+		endpoint = 'notes/kigurumi-timeline';
+		query = {}
 	} else {
 		throw new Error('Unrecognized timeline type: ' + props.src);
 	}
