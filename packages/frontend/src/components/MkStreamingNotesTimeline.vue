@@ -138,6 +138,11 @@ if (props.src === 'antenna') {
 		})),
 		useShallowRef: true,
 	}));
+} else if (props.src === 'kigurumi') {
+	paginator = markRaw(new Paginator('notes/kigurumi-timeline', {
+		computedParams: computed(() => ({})),
+		useShallowRef: true,
+	}));
 } else if (props.src === 'global') {
 	paginator = markRaw(new Paginator('notes/global-timeline', {
 		computedParams: computed(() => ({
