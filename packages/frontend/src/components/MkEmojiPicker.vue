@@ -140,7 +140,6 @@ import { customEmojiCategories, customEmojis, customEmojisMap } from '@/custom-e
 import { $i } from '@/i.js';
 import { checkReactionPermissions } from '@/utility/check-reaction-permissions.js';
 import { prefer } from '@/preferences.js';
-import { convertToRomaji } from '@/convert-romaji';
 import { useRouter } from '@/router.js';
 
 const router = useRouter();
@@ -228,81 +227,76 @@ watch(q, () => {
 	}
 
 	const newQ = q.value.replace(/:/g, '').toLowerCase();
-	const newQs = convertToRomaji(newQ);
 
 	const searchCustom = () => {
 		const max = 100;
 		const emojis = customEmojis.value;
 		const matches = new Set<Misskey.entities.EmojiSimple>();
 
-		// 変数名をいじりたくないので遮蔽している(Unicode側のカスタム絵文字は無視)
-		for (const newQ of newQs) {
-			const exactMatch = emojis.find(emoji => emoji.name === newQ);
-			if (exactMatch) matches.add(exactMatch);
+		const exactMatch = emojis.find(emoji => emoji.name === newQ);
+		if (exactMatch) matches.add(exactMatch);
 
-			if (newQ.includes(' ')) { // AND検索
-				const keywords = newQ.split(' ');
+		if (newQ.includes(' ')) { // AND検索
+			const keywords = newQ.split(' ');
 
-				// 名前にキーワードが含まれている
-				for (const emoji of emojis) {
-					if (keywords.every(keyword => emoji.name.includes(keyword))) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			// 名前にキーワードが含まれている
+			for (const emoji of emojis) {
+				if (keywords.every(keyword => emoji.name.includes(keyword))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-				if (matches.size >= max) return matches;
+			}
+			if (matches.size >= max) return matches;
 
-				// 名前またはエイリアスにキーワードが含まれている
-				for (const emoji of emojis) {
-					if (keywords.every(keyword => emoji.name.includes(keyword) || emoji.aliases.some(alias => alias.includes(keyword)))) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			// 名前またはエイリアスにキーワードが含まれている
+			for (const emoji of emojis) {
+				if (keywords.every(keyword => emoji.name.includes(keyword) || emoji.aliases.some(alias => alias.includes(keyword)))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-			} else {
-				if (customEmojisMap.has(newQ)) {
-					matches.add(customEmojisMap.get(newQ)!);
-				}
-				if (matches.size >= max) return matches;
+			}
+		} else {
+			if (customEmojisMap.has(newQ)) {
+				matches.add(customEmojisMap.get(newQ)!);
+			}
+			if (matches.size >= max) return matches;
 
-				for (const emoji of emojis) {
-					if (emoji.aliases.some(alias => alias === newQ)) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			for (const emoji of emojis) {
+				if (emoji.aliases.some(alias => alias === newQ)) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-				if (matches.size >= max) return matches;
+			}
+			if (matches.size >= max) return matches;
 
-				for (const emoji of emojis) {
-					if (emoji.name.startsWith(newQ)) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			for (const emoji of emojis) {
+				if (emoji.name.startsWith(newQ)) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-				if (matches.size >= max) return matches;
+			}
+			if (matches.size >= max) return matches;
 
-				for (const emoji of emojis) {
-					if (emoji.aliases.some(alias => alias.startsWith(newQ))) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			for (const emoji of emojis) {
+				if (emoji.aliases.some(alias => alias.startsWith(newQ))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-				if (matches.size >= max) return matches;
+			}
+			if (matches.size >= max) return matches;
 
-				for (const emoji of emojis) {
-					// アンスコ(_)が分節を分断している場合がある
-					if (emoji.name.replace(/_/g, '').includes(newQ)) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			for (const emoji of emojis) {
+				if (emoji.name.includes(newQ)) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
-				if (matches.size >= max) return matches;
+			}
+			if (matches.size >= max) return matches;
 
-				for (const emoji of emojis) {
-					if (emoji.aliases.some(alias => alias.includes(newQ))) {
-						matches.add(emoji);
-						if (matches.size >= max) break;
-					}
+			for (const emoji of emojis) {
+				if (emoji.aliases.some(alias => alias.includes(newQ))) {
+					matches.add(emoji);
+					if (matches.size >= max) break;
 				}
 			}
 		}
@@ -577,21 +571,21 @@ defineExpose({
 	&.asDrawer {
 		width: 100% !important;
 
-		>.emojis {
+		> .emojis {
 			::v-deep(section) {
-				>header {
+				> header {
 					height: 32px;
 					line-height: 32px;
 					padding: 0 12px;
 					font-size: 15px;
 				}
 
-				>.body {
+				> .body {
 					display: grid;
 					grid-template-columns: var(--columns);
 					font-size: 30px;
 
-					>.item {
+					> .item {
 						aspect-ratio: 1 / 1;
 						width: auto;
 						height: auto;
@@ -602,7 +596,7 @@ defineExpose({
 							background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 							opacity: 1;
 
-							>.emoji {
+							> .emoji {
 								filter: grayscale(1);
 								mix-blend-mode: exclusion;
 								opacity: 0.8;
@@ -618,14 +612,14 @@ defineExpose({
 		width: 100% !important;
 		height: 100% !important;
 
-		>.emojis {
+		> .emojis {
 			::v-deep(section) {
-				>.body {
+				> .body {
 					display: grid;
 					grid-template-columns: var(--columns);
 					font-size: 30px;
 
-					>.item {
+					> .item {
 						aspect-ratio: 1 / 1;
 						width: auto;
 						height: auto;
@@ -637,7 +631,7 @@ defineExpose({
 							background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 							opacity: 1;
 
-							>.emoji {
+							> .emoji {
 								filter: grayscale(1);
 								mix-blend-mode: exclusion;
 								opacity: 0.8;
@@ -649,7 +643,7 @@ defineExpose({
 		}
 	}
 
-	>.search {
+	> .search {
 		width: 100%;
 		padding: 12px;
 		box-sizing: border-box;
@@ -670,11 +664,11 @@ defineExpose({
 		}
 	}
 
-	>.tabs {
+	> .tabs {
 		display: flex;
 		display: none;
 
-		>.tab {
+		> .tab {
 			flex: 1;
 			height: 38px;
 			border-top: solid 0.5px var(--MI_THEME-divider);
@@ -686,24 +680,19 @@ defineExpose({
 		}
 	}
 
-	>.emojis {
+	> .emojis {
 		height: 100%;
 		overflow-y: auto;
 		overflow-x: hidden;
-
 		scrollbar-width: none;
 
-		&::-webkit-scrollbar {
-			display: none;
-		}
-
-		>.group {
+		> .group {
 			&:not(.index) {
 				padding: 4px 0 8px 0;
 				border-top: solid 0.5px var(--MI_THEME-divider);
 			}
 
-			>header {
+			> header {
 				/*position: sticky;
 				top: 0;
 				left: 0;*/
@@ -716,7 +705,7 @@ defineExpose({
 		}
 
 		::v-deep(section) {
-			>header {
+			> header {
 				position: sticky;
 				top: 0;
 				left: 0;
@@ -731,7 +720,7 @@ defineExpose({
 				}
 			}
 
-			>.body {
+			> .body {
 				position: relative;
 				padding: $pad;
 
@@ -767,14 +756,14 @@ defineExpose({
 						background: linear-gradient(-45deg, transparent 0% 48%, light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.15)) 48% 52%, transparent 52% 100%);
 						opacity: 1;
 
-						>.emoji {
+						> .emoji {
 							filter: grayscale(1);
 							mix-blend-mode: exclusion;
 							opacity: 0.8;
 						}
 					}
 
-					>.emoji {
+					> .emoji {
 						height: 1.25em;
 						vertical-align: -.25em;
 						pointer-events: none;
