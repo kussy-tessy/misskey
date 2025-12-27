@@ -140,6 +140,7 @@ import { customEmojiCategories, customEmojis, customEmojisMap } from '@/custom-e
 import { $i } from '@/i.js';
 import { checkReactionPermissions } from '@/utility/check-reaction-permissions.js';
 import { prefer } from '@/preferences.js';
+import { convertToRomaji } from '@/convert-romaji';
 import { useRouter } from '@/router.js';
 
 const router = useRouter();
@@ -227,12 +228,15 @@ watch(q, () => {
 	}
 
 	const newQ = q.value.replace(/:/g, '').toLowerCase();
+	const newQs = convertToRomaji(newQ);
 
 	const searchCustom = () => {
 		const max = 100;
 		const emojis = customEmojis.value;
 		const matches = new Set<Misskey.entities.EmojiSimple>();
 
+		// 変数名をいじりたくないので遮蔽している(Unicode側のカスタム絵文字は無視) & インデントをずらしていない
+		for(const newQ of newQs) {
 		const exactMatch = emojis.find(emoji => emoji.name === newQ);
 		if (exactMatch) matches.add(exactMatch);
 
@@ -286,7 +290,8 @@ watch(q, () => {
 			if (matches.size >= max) return matches;
 
 			for (const emoji of emojis) {
-				if (emoji.name.includes(newQ)) {
+				// アンスコ(_)が分節を分断している場合がある
+				if (emoji.name.replace(/_/g, '').includes(newQ)) {
 					matches.add(emoji);
 					if (matches.size >= max) break;
 				}
@@ -299,6 +304,7 @@ watch(q, () => {
 					if (matches.size >= max) break;
 				}
 			}
+		}
 		}
 
 		return matches;
