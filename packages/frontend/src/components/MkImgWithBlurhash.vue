@@ -83,7 +83,7 @@ const canvasPromise = new Promise<WorkerMultiDispatch | HTMLCanvasElement>(resol
 
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, onUnmounted, useTemplateRef, watch, ref, emit } from 'vue';
-import { v4 as uuid } from 'uuid';
+import { genId } from '@/utility/id.js';
 import { render } from 'buraha';
 import { prefer } from '@/preferences.js';
 
@@ -121,8 +121,7 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits(['unlockBlur'])
-
-const viewId = uuid();
+const viewId = genId();
 const canvas = useTemplateRef('canvas');
 const root = useTemplateRef('root');
 const img = useTemplateRef('img');
