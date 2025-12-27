@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<option value="notes">{{ i18n.ts.notes }}</option>
 			<option value="all">{{ i18n.ts.all }}</option>
 			<option value="files">{{ i18n.ts.withFiles }}</option>
+			<option value="kigurumi">着ぐるみさん</option>
 		</MkTab>
 	</template>
 	<MkNotesTimeline v-if="tab === 'featured'" :noGap="true" :paginator="featuredPaginator" :pullToRefresh="false" :class="$style.tl"/>
@@ -47,6 +48,7 @@ const notesPaginator = markRaw(new Paginator('users/notes', {
 		withReplies: tab.value === 'all',
 		withChannelNotes: tab.value === 'all',
 		withFiles: tab.value === 'files',
+		kigurumi: tab.value === 'kigurumi',
 	})),
 }));
 </script>
