@@ -735,9 +735,6 @@ defineExpose({
 				position: relative;
 				padding: $pad;
 
-<<<<<<< HEAD
-				>.item {
-=======
 				> .config {
 					position: relative;
 					padding: 0 3px;
@@ -748,7 +745,6 @@ defineExpose({
 				}
 
 				> .item {
->>>>>>> 2025.6.3
 					position: relative;
 					padding: 0 3px;
 					width: var(--eachSize);
