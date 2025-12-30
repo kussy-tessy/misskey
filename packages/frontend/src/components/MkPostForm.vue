@@ -878,32 +878,33 @@ async function post(ev?: MouseEvent) {
 
 	if (props.mock) return;
 
-	if (visibility.value === 'public' && (
-		(useCw.value && cw.value != null && cw.value.trim() !== '' && isAnnoying(cw.value)) || // CWが迷惑になる場合
-		((!useCw.value || cw.value == null || cw.value.trim() === '') && text.value != null && text.value.trim() !== '' && isAnnoying(text.value)) // CWが無い かつ 本文が迷惑になる場合
-	)) {
-		const { canceled, result } = await os.actions({
-			type: 'warning',
-			text: i18n.ts.thisPostMayBeAnnoying,
-			actions: [{
-				value: 'home',
-				text: i18n.ts.thisPostMayBeAnnoyingHome,
-				primary: true,
-			}, {
-				value: 'cancel',
-				text: i18n.ts.thisPostMayBeAnnoyingCancel,
-			}, {
-				value: 'ignore',
-				text: i18n.ts.thisPostMayBeAnnoyingIgnore,
-			}],
-		});
+	// うちのサーバーではそんなこと気にしない
+	// if (visibility.value === 'public' && (
+	// 	(useCw.value && cw.value != null && cw.value.trim() !== '' && isAnnoying(cw.value)) || // CWが迷惑になる場合
+	// 	((!useCw.value || cw.value == null || cw.value.trim() === '') && text.value != null && text.value.trim() !== '' && isAnnoying(text.value)) // CWが無い かつ 本文が迷惑になる場合
+	// )) {
+	// 	const { canceled, result } = await os.actions({
+	// 		type: 'warning',
+	// 		text: i18n.ts.thisPostMayBeAnnoying,
+	// 		actions: [{
+	// 			value: 'home',
+	// 			text: i18n.ts.thisPostMayBeAnnoyingHome,
+	// 			primary: true,
+	// 		}, {
+	// 			value: 'cancel',
+	// 			text: i18n.ts.thisPostMayBeAnnoyingCancel,
+	// 		}, {
+	// 			value: 'ignore',
+	// 			text: i18n.ts.thisPostMayBeAnnoyingIgnore,
+	// 		}],
+	// 	});
 
-		if (canceled) return;
-		if (result === 'cancel') return;
-		if (result === 'home') {
-			visibility.value = 'home';
-		}
-	}
+	// 	if (canceled) return;
+	// 	if (result === 'cancel') return;
+	// 	if (result === 'home') {
+	// 		visibility.value = 'home';
+	// 	}
+	// }
 
 	if (uploader.items.value.some(x => x.uploaded == null)) {
 		await uploadFiles();
