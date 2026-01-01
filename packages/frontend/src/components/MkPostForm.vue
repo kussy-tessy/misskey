@@ -147,6 +147,7 @@ import { DI } from '@/di.js';
 import { globalEvents } from '@/events.js';
 import { checkDragDataType, getDragData } from '@/drag-and-drop.js';
 import { useUploader } from '@/composables/use-uploader.js';
+import { deviceKind } from '@/utility/device-kind.js';
 
 const $i = ensureSignin();
 
@@ -915,6 +916,11 @@ async function post(ev?: MouseEvent) {
 
 	if (uploader.items.value.some(x => x.uploaded == null)) {
 		await uploadFiles();
+
+		// アップロード失敗したものがあったら中止
+		if (uploader.items.value.some(x => x.uploaded == null)) {
+			return;
+		}
 	}
 
 	let postData = {
@@ -962,7 +968,16 @@ async function post(ev?: MouseEvent) {
 
 	if (postAccount.value) {
 		const storedAccounts = await getAccounts();
-		token = storedAccounts.find(x => x.id === postAccount.value?.id)?.token;
+		const storedAccount = storedAccounts.find(x => x.id === postAccount.value?.id);
+		if (storedAccount && storedAccount.token != null) {
+			token = storedAccount.token;
+		} else {
+			await os.alert({
+				type: 'error',
+				text: 'cannot find the token of the selected account.',
+			});
+			return;
+		}
 	}
 
 	posting.value = true;
@@ -1031,6 +1046,10 @@ async function post(ev?: MouseEvent) {
 			if (serverDraftId.value != null) {
 				misskeyApi('notes/drafts/delete', { draftId: serverDraftId.value });
 			}
+
+			// デスクトップの場合フォーカスを維持する
+			console.log('focusを維持する')
+			deviceKind === 'desktop' && focus();
 		});
 	}).catch(err => {
 		posting.value = false;
