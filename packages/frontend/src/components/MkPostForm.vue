@@ -457,7 +457,6 @@ function addTag(tag: string) {
 }
 
 function focus() {
-	console.log({textareaEl}); // debug
 	if (textareaEl.value) {
 		textareaEl.value.focus();
 		textareaEl.value.setSelectionRange(textareaEl.value.value.length, textareaEl.value.value.length);
@@ -1047,10 +1046,9 @@ async function post(ev?: MouseEvent) {
 			if (serverDraftId.value != null) {
 				misskeyApi('notes/drafts/delete', { draftId: serverDraftId.value });
 			}
-
-			// デスクトップの場合フォーカスを維持する
-			console.log({deviceKind});
-			deviceKind === 'desktop' && focus();
+			nextTick(() => {
+				deviceKind === 'desktop' && focus();
+			});
 		});
 	}).catch(err => {
 		posting.value = false;
