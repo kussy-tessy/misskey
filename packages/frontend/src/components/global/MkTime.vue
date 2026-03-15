@@ -14,9 +14,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import isChromatic from 'chromatic/isChromatic';
-import { onMounted, onUnmounted, ref, computed } from 'vue';
+import { computed } from 'vue';
 import { i18n } from '@/i18n.js';
 import { dateTimeFormat } from '@@/js/intl-const.js';
+import { useLowresTime } from '@/composables/use-lowres-time.js';
 
 const props = withDefaults(defineProps<{
 	time: Date | string | number | null;
@@ -50,8 +51,10 @@ const padZero = val => ('0' + val).slice(-2);
 const absoluteTimeOnly = !invalid ? 
 	`${padZero(dateTime.getHours())}:${padZero(dateTime.getMinutes())}` : i18n.ts._ago.invalid;
 
+const actualNow = useLowresTime();
+const now = computed(() => (props.origin ? props.origin.getTime() : actualNow.value));
+
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const now = ref(props.origin?.getTime() ?? Date.now());
 const ago = computed(() => (now.value - _time) / 1000/*ms*/);
 
 const relative = computed<string>(()=>{
@@ -102,29 +105,6 @@ const relativeMix = computed<string>(() => {
 		i18n.tsx._timeIn.seconds({ n: (~~(-ago.value % 60)).toString() })
 	);
 });
-
-let tickId: number;
-let currentInterval: number;
-
-function tick() {
-	now.value = Date.now();
-	const nextInterval = ago.value < 60 ? 10000 : ago.value < 3600 ? 60000 : 180000;
-
-	if (currentInterval !== nextInterval) {
-		if (tickId) window.clearInterval(tickId);
-		currentInterval = nextInterval;
-		tickId = window.setInterval(tick, nextInterval);
-	}
-}
-
-if (!invalid && props.origin === null && (props.mode === 'relative' || props.mode === 'detail')) {
-	onMounted(() => {
-		tick();
-	});
-	onUnmounted(() => {
-		if (tickId) window.clearInterval(tickId);
-	});
-}
 </script>
 
 <style lang="scss" module>
