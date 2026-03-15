@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	{{ i18n.ts.deletedNote }}
 </div>
 <div v-else-if="!muted" :class="[$style.root, { [$style.children]: depth > 1 }]">
-	<div :class="$style.main">
+	<div :class="$style.main" @pointerdown="onPointerDown" @pointerup="onPointerUp(appearNote.id, $event)">
 		<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
 		<div :class="$style.body">
