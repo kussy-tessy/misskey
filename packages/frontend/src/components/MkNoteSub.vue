@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	{{ i18n.ts.deletedNote }}
 </div>
 <div v-else-if="!muted" :class="[$style.root, { [$style.children]: depth > 1 }]">
-	<div :class="$style.main" @pointerdown="onPointerDown" @pointerup="onPointerUp(appearNote.id, $event)">
+	<div :class="$style.main" @pointerdown="onPointerDown" @pointerup="onPointerUp(note.id, $event)">
 		<div v-if="note.channel" :class="$style.colorBar" :style="{ background: note.channel.color }"></div>
 		<MkAvatar :class="$style.avatar" :user="note.user" link preview/>
 		<div :class="$style.body">
@@ -89,6 +89,7 @@ const onPointerDown = (event: PointerEvent) => {
   startY.value = event.clientY;
 };
 const onPointerUp = (id: string, event: PointerEvent) => {
+	console.log({id});
   const diffX = Math.abs(event.clientX - startX.value);
   const diffY = Math.abs(event.clientY - startY.value);
   if (diffX < dragThreshold && diffY < dragThreshold) {
