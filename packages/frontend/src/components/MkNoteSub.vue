@@ -89,7 +89,6 @@ const onPointerDown = (event: PointerEvent) => {
   startY.value = event.clientY;
 };
 const onPointerUp = (id: string, event: PointerEvent) => {
-	console.log({id});
   const diffX = Math.abs(event.clientX - startX.value);
   const diffY = Math.abs(event.clientY - startY.value);
   if (diffX < dragThreshold && diffY < dragThreshold) {
