@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <div v-if="note" :class="$style.root">
 	<MkAvatar :class="[$style.avatar, prefer.s.useStickyIcons ? $style.useSticky : null]" :user="note.user" link preview/>
-	<div :class="$style.main">
+	<div :class="$style.main" @pointerdown="onPointerDown" @pointerup="onPointerUp(note.id, $event)">
 		<MkNoteHeader :class="$style.header" :note="note" :mini="true"/>
 		<div>
 			<p v-if="note.cw != null" :class="$style.cw">
