@@ -162,7 +162,7 @@ export class NoteEntityService implements OnModuleInit {
 
 		// 連合なしで未ログインなら非表示
 		if(packedNote.localOnly && !meId){
-			hide = true;
+			return true;
 		}
 
 		// visibility が followers かつ自分が投稿者のフォロワーでなかったら非表示

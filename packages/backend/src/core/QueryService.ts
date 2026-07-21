@@ -264,10 +264,9 @@ export class QueryService {
 			q.andWhere(
 				new Brackets(qb => {
 					qb.where('note.visibility = \'public\'')
-					.orWhere('note.visibility = \'home\'')}
-				)
-				.andWhere('note.localOnly = FALSE') // 連合なしのノートは未ログイン者には見せない
-			)
+						.orWhere('note.visibility = \'home\'');
+				})
+			).andWhere('note.localOnly = FALSE'); // 連合なしのノートは未ログイン者には見せない
 		} else {
 			const followingQuery = this.followingsRepository.createQueryBuilder('following')
 				.select('following.followeeId')
