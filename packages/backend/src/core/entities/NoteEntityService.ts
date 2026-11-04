@@ -146,6 +146,11 @@ export class NoteEntityService implements OnModuleInit {
 			return true;
 		}
 
+		// 連合なしで未ログインなら非表示
+		if(packedNote.localOnly && !meId){
+			return true;
+		}
+
 		// visibility が specified かつ自分が指定されていなかったら非表示
 		if (packedNote.visibility === 'specified') {
 			if (meId == null) {
@@ -158,11 +163,6 @@ export class NoteEntityService implements OnModuleInit {
 					return true;
 				}
 			}
-		}
-
-		// 連合なしで未ログインなら非表示
-		if(packedNote.localOnly && !meId){
-			return true;
 		}
 
 		// visibility が followers かつ自分が投稿者のフォロワーでなかったら非表示
@@ -295,8 +295,8 @@ export class NoteEntityService implements OnModuleInit {
 		}
 
 
-		// 連合なし、かつ visibility が home で未ログインなら非表示
-		if(note.localOnly && note.visibility === 'home' && !meId){
+		// 連合なし、かつ 未ログインなら非表示
+		if(note.localOnly && !meId){
 			return false;
 		}
 
