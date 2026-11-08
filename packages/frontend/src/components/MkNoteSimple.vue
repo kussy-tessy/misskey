@@ -32,13 +32,15 @@ import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
 import { i18n } from '@/i18n.js';
 import { prefer } from '@/preferences.js';
-import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
+import { useToNotePage } from '@/composables/use-to-note-page.js';
 
 const props = defineProps<{
 	note: Misskey.entities.Note | null;
 }>();
 
 const showContent = ref(false);
+
+const { onPointerDown, onPointerUp } = useToNotePage();
 
 // const startX = ref(0);
 // const startY = ref(0);

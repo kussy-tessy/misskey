@@ -50,12 +50,11 @@ import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
 import { notePage } from '@/filters/note.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
-import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
+import { useToNotePage } from '@/composables/use-to-note-page.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/utility/check-word-mute.js';
-import { useRouter } from '@/router.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note | null;
@@ -80,6 +79,8 @@ if (props.detail && props.note) {
 		replies.value = res;
 	});
 }
+
+const { onPointerDown, onPointerUp } = useToNotePage();
 
 // const startX = ref(0);
 // const startY = ref(0);

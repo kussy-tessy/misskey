@@ -206,7 +206,7 @@ import { userPage } from '@/filters/user.js';
 import { getNoteSummary } from '@/utility/get-note-summary.js';
 import { isEnabledUrlPreview } from '@/utility/url-preview.js';
 import { focusPrev, focusNext } from '@/utility/focus.js';
-import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
+import { useToNotePage } from '@/composables/use-to-note-page.js';
 import number from '@/filters/number.js';
 import { DI } from '@/di.js';
 import type { Keymap } from '@/utility/hotkey.js';
@@ -375,6 +375,8 @@ const keymap = {
 		callback: () => focusNext(rootEl.value),
 	},
 } as const satisfies Keymap;
+
+const { onPointerDown, onPointerUp } = useToNotePage();
 
 // const startX = ref(0);
 // const startY = ref(0);
