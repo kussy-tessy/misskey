@@ -100,6 +100,7 @@ const router = useRouter();
 function toNotePage(id: string, e: MouseEvent){
 	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
 	const isIgnored = (e.target as Element).closest(ignoreSelector);
+	console.log({e})
 	if (!isIgnored){
 		router.push(`/notes/${id}`);
 	}
