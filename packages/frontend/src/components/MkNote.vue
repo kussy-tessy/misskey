@@ -206,6 +206,7 @@ import { userPage } from '@/filters/user.js';
 import { getNoteSummary } from '@/utility/get-note-summary.js';
 import { isEnabledUrlPreview } from '@/utility/url-preview.js';
 import { focusPrev, focusNext } from '@/utility/focus.js';
+import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
 import number from '@/filters/number.js';
 import { DI } from '@/di.js';
 import type { Keymap } from '@/utility/hotkey.js';
@@ -220,7 +221,6 @@ import MkCwButton from '@/components/MkCwButton.vue';
 import MkPoll from '@/components/MkPoll.vue';
 import MkUrlPreview from '@/components/MkUrlPreview.vue';
 import MkInstanceTicker from '@/components/MkInstanceTicker.vue';
-import { useRouter } from '@/router.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note;
@@ -376,31 +376,31 @@ const keymap = {
 	},
 } as const satisfies Keymap;
 
-const startX = ref(0);
-const startY = ref(0);
-const dragThreshold = 5;
+// const startX = ref(0);
+// const startY = ref(0);
+// const dragThreshold = 5;
 
-const onPointerDown = (event: PointerEvent) => {
-  startX.value = event.clientX;
-  startY.value = event.clientY;
-};
-const onPointerUp = (id: string, event: PointerEvent) => {
-  const diffX = Math.abs(event.clientX - startX.value);
-  const diffY = Math.abs(event.clientY - startY.value);
-  if (diffX < dragThreshold && diffY < dragThreshold) {
-    toNotePage(id, event);
-  }
-};
+// const onPointerDown = (event: PointerEvent) => {
+//   startX.value = event.clientX;
+//   startY.value = event.clientY;
+// };
+// const onPointerUp = (id: string, event: PointerEvent) => {
+//   const diffX = Math.abs(event.clientX - startX.value);
+//   const diffY = Math.abs(event.clientY - startY.value);
+//   if (diffX < dragThreshold && diffY < dragThreshold) {
+//     toNotePage(id, event);
+//   }
+// };
 
-const router = useRouter();
-function toNotePage(id: string, e: MouseEvent){
-	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
-	const isIgnored = (e.target as Element).closest(ignoreSelector);
-	console.log({e})
-	if (!isIgnored){
-		router.push(`/notes/${id}`);
-	}
-}
+// const router = useRouter();
+// function toNotePage(id: string, e: MouseEvent){
+// 	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
+// 	const isIgnored = (e.target as Element).closest(ignoreSelector);
+// 	console.log({e})
+// 	if (!isIgnored){
+// 		router.push(`/notes/${id}`);
+// 	}
+// }
 </script>
 
 <style lang="scss" module>

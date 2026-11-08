@@ -50,6 +50,7 @@ import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
 import { notePage } from '@/filters/note.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
+import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 import { userPage } from '@/filters/user.js';
@@ -80,31 +81,31 @@ if (props.detail && props.note) {
 	});
 }
 
-const startX = ref(0);
-const startY = ref(0);
-const dragThreshold = 5;
+// const startX = ref(0);
+// const startY = ref(0);
+// const dragThreshold = 5;
 
-const onPointerDown = (event: PointerEvent) => {
-  startX.value = event.clientX;
-  startY.value = event.clientY;
-};
-const onPointerUp = (id: string, event: PointerEvent) => {
-  const diffX = Math.abs(event.clientX - startX.value);
-  const diffY = Math.abs(event.clientY - startY.value);
-  if (diffX < dragThreshold && diffY < dragThreshold) {
-    toNotePage(id, event);
-  }
-};
+// const onPointerDown = (event: PointerEvent) => {
+//   startX.value = event.clientX;
+//   startY.value = event.clientY;
+// };
+// const onPointerUp = (id: string, event: PointerEvent) => {
+//   const diffX = Math.abs(event.clientX - startX.value);
+//   const diffY = Math.abs(event.clientY - startY.value);
+//   if (diffX < dragThreshold && diffY < dragThreshold) {
+//     toNotePage(id, event);
+//   }
+// };
 
-const router = useRouter();
-function toNotePage(id: string, e: MouseEvent){
-	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
-	const isIgnored = (e.target as Element).closest(ignoreSelector);
-	console.log({e})
-	if (!isIgnored){
-		router.push(`/notes/${id}`);
-	}
-}
+// const router = useRouter();
+// function toNotePage(id: string, e: MouseEvent){
+// 	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
+// 	const isIgnored = (e.target as Element).closest(ignoreSelector);
+// 	console.log({e})
+// 	if (!isIgnored){
+// 		router.push(`/notes/${id}`);
+// 	}
+// }
 </script>
 
 <style lang="scss" module>

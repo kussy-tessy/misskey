@@ -30,9 +30,9 @@ import * as Misskey from 'misskey-js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
-import { useRouter } from '@/router.js';
 import { i18n } from '@/i18n.js';
 import { prefer } from '@/preferences.js';
+import { onPointerUp, onPointerDown } from '@/utility/to-note-page.js';
 
 const props = defineProps<{
 	note: Misskey.entities.Note | null;
@@ -40,31 +40,31 @@ const props = defineProps<{
 
 const showContent = ref(false);
 
-const startX = ref(0);
-const startY = ref(0);
-const dragThreshold = 5;
+// const startX = ref(0);
+// const startY = ref(0);
+// const dragThreshold = 5;
 
-const onPointerDown = (event: PointerEvent) => {
-  startX.value = event.clientX;
-  startY.value = event.clientY;
-};
-const onPointerUp = (id: string, event: PointerEvent) => {
-  const diffX = Math.abs(event.clientX - startX.value);
-  const diffY = Math.abs(event.clientY - startY.value);
-  if (diffX < dragThreshold && diffY < dragThreshold) {
-    toNotePage(id, event);
-  }
-};
+// const onPointerDown = (event: PointerEvent) => {
+//   startX.value = event.clientX;
+//   startY.value = event.clientY;
+// };
+// const onPointerUp = (id: string, event: PointerEvent) => {
+//   const diffX = Math.abs(event.clientX - startX.value);
+//   const diffY = Math.abs(event.clientY - startY.value);
+//   if (diffX < dragThreshold && diffY < dragThreshold) {
+//     toNotePage(id, event);
+//   }
+// };
 
-const router = useRouter();
-function toNotePage(id: string, e: MouseEvent){
-	const ignoreSelector = "a, button, video, input, .chromatic-ignore";
-	const isIgnored = (e.target as Element).closest(ignoreSelector);
-	console.log({e})
-	if (!isIgnored){
-		router.push(`/notes/${id}`);
-	}
-}
+// const router = useRouter();
+// function toNotePage(id: string, e: MouseEvent){
+// 	const ignoreSelector = "a, button, video, input, .media-list";
+// 	const isIgnored = (e.target as Element).closest(ignoreSelector);
+// 	console.log({e})
+// 	if (!isIgnored){
+// 		router.push(`/notes/${id}`);
+// 	}
+// }
 </script>
 
 <style lang="scss" module>
