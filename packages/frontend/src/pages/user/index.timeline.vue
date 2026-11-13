@@ -56,6 +56,10 @@ const notesPaginator = markRaw(new Paginator('users/notes', {
 		kigurumi: tab.value === 'kigurumi',
 	})),
 }));
+
+defineExpose({
+	reload: () => (tab.value === 'featured' ? featuredPaginator : notesPaginator).reload(),
+});
 </script>
 
 <style lang="scss" module>
